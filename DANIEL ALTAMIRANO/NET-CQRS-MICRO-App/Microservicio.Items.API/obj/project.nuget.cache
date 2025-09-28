@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "kDZ+bTZwS5c=",
+  "dgSpecHash": "WiywopmKYYU=",
   "success": true,
-  "projectFilePath": "C:\\repos\\DANIEL ALTAMIRANO\\Microservicio.Items.API\\Microservicio.Items.API.csproj",
+  "projectFilePath": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\impor\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\impor\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",

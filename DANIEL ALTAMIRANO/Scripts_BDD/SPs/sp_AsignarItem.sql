@@ -36,25 +36,23 @@ BEGIN
     BEGIN
         -- Usuarios con menos items altamente relevantes (<3) y con menor carga
         SELECT 
-		TOP		 1 
-				 @UsuarioId = UsuarioId
+		TOP		 1
+				 @UsuarioId = UsuarioId --SELECT *
         FROM     UsuarioReferencia
         WHERE    Activo = 1 
-		AND		 ItemsAltamenteRelevantes < 3
-        ORDER BY ItemsAltamenteRelevantes 
-		ASC, 
-		ItemsPendientes ASC;
+		AND		 ItemsCompletados < 3
+        ORDER BY ItemsCompletados 
+		ASC;		
     END
     ELSE
     BEGIN
         SELECT 
 		TOP		 1 
-				 @UsuarioId = UsuarioId
+				 @UsuarioId = UsuarioId  --SELECT *
         FROM	 UsuarioReferencia
         WHERE	 Activo = 1
         ORDER BY ItemsPendientes 
-		ASC, 
-		ItemsAltamenteRelevantes ASC;
+		ASC;
     END
 
     IF @UsuarioId IS NULL
@@ -88,14 +86,14 @@ BEGIN
 		);
 
         IF @Relevancia = 2
-            UPDATE  UsuarioReferencia
-            SET		ItemsAltamenteRelevantes = ItemsAltamenteRelevantes + 1,
-					ItemsPendientes			 = ItemsPendientes + 1
-            WHERE	UsuarioId				 = @UsuarioId;
-        ELSE
-            UPDATE UsuarioReferencia
-            SET    ItemsPendientes = ItemsPendientes + 1
-            WHERE  UsuarioId	   = @UsuarioId;
+			UPDATE UsuarioReferencia
+			SET	   ItemsPendientes = ItemsPendientes + 1
+			WHERE  UsuarioId	   = @UsuarioId;
+		ELSE
+			UPDATE UsuarioReferencia
+			SET    ItemsPendientes = ItemsPendientes + 1
+			WHERE  UsuarioId	   = @UsuarioId;
+
 
         COMMIT TRANSACTION;
     END TRY

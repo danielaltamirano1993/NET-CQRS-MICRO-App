@@ -1,19 +1,38 @@
-﻿namespace Microservicio.Items.API.Domain
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Microservicio.Items.API.Domain
 {
     public class ItemTrabajo
     {
+        [Key]
         public int ItemId { get; set; }
-        public string Titulo { get; set; }
-        public string Descripcion { get; set; }
-        public DateTime FechaCreacion { get; set; }
-        public DateTime FechaEntrega { get; set; }
-        public byte Relevancia { get; set; } // 1 baja,
-                                             // 2 alta
-        public string Estado { get; set; } // Pendiente,
-                                           // En Proceso,
-                                           // Completado
 
-        // FK a UsuarioReferencia.UsuarioId (solo ID)                                            
-        public int? UsuarioAsignado { get; set; } 
+        [Required]
+        [MaxLength(200)]
+        public string Titulo { get; set; } = string.Empty;
+
+        public string? Descripcion { get; set; }
+
+        [Required]
+        public DateTime FechaCreacion { get; set; } = DateTime.UtcNow;
+
+        [Required]
+        public DateTime FechaEntrega { get; set; }
+
+        [Required]
+        public byte Relevancia { get; set; } = 1; // 1 = Baja, 2 = Alta
+
+        [Required]
+        [MaxLength(20)]
+        public string Estado { get; set; } = "Pendiente"; // Pendiente, En Proceso, Completado
+
+        // Clave foránea
+        public int? UsuarioAsignado { get; set; }
+        public UsuarioReferencia? Usuario { get; set; }
+
+        // Relaciones
+        public ICollection<HistorialAsignacion>? Historiales { get; set; }
     }
 }

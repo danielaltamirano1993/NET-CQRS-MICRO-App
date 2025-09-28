@@ -1,11 +1,23 @@
-﻿namespace Microservicio.Items.API.Domain
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+
+namespace Microservicio.Items.API.Domain
 {
     public class UsuarioReferencia
     {
+        [Key]
         public int UsuarioId { get; set; }
-        public string NombreUsuario { get; set; }
-        public int ItemsPendientes { get; set; }
-        public int ItemsAltamenteRelevantes { get; set; }
-        public bool Activo { get; set; }
+
+        [Required]
+        [MaxLength(100)]
+        public string NombreUsuario { get; set; } = string.Empty;
+
+        public int ItemsPendientes { get; set; } = 0;
+        public int ItemsCompletados { get; set; } = 0;
+        public bool Activo { get; set; } = true;
+
+        // Relaciones
+        public ICollection<ItemTrabajo>? ItemsAsignados { get; set; }
+        public ICollection<HistorialAsignacion>? Historiales { get; set; }
     }
 }

@@ -17,9 +17,11 @@ BEGIN
     SELECT   ItemId, 
 		     Titulo, 
 		     Descripcion, 
+			 FechaCreacion,
 		     FechaEntrega, 
 		     Relevancia, 
-		     Estado
+		     Estado,
+			 UsuarioAsignado
     FROM     ItemTrabajo
     WHERE	 UsuarioAsignado = @UsuarioId 
 	AND		 Estado <> 'Completado'

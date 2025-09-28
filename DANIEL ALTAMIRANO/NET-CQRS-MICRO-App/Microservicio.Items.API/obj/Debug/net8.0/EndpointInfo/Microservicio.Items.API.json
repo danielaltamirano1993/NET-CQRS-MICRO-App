@@ -5,7 +5,7 @@
     "version": "1.0"
   },
   "paths": {
-    "/api/Items": {
+    "/api/Items/CrearItemTrabajo": {
       "post": {
         "tags": [
           "Items"
@@ -14,17 +14,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CrearItemCommand"
+                "$ref": "#/components/schemas/CrearItemTrabajoCommand"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/CrearItemCommand"
+                "$ref": "#/components/schemas/CrearItemTrabajoCommand"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/CrearItemCommand"
+                "$ref": "#/components/schemas/CrearItemTrabajoCommand"
               }
             }
           }
@@ -36,14 +36,14 @@
         }
       }
     },
-    "/api/Items/{itemId}/assign": {
+    "/api/Items/AsignarItem/{usuarioId}": {
       "post": {
         "tags": [
           "Items"
         ],
         "parameters": [
           {
-            "name": "itemId",
+            "name": "usuarioId",
             "in": "path",
             "required": true,
             "schema": {
@@ -52,6 +52,25 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignarItemRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignarItemRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignarItemRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -59,7 +78,7 @@
         }
       }
     },
-    "/api/Items/pendientes/{usuarioId}": {
+    "/api/Items/ListarPendientesPorUsuario/{usuarioId}": {
       "get": {
         "tags": [
           "Items"
@@ -85,7 +104,17 @@
   },
   "components": {
     "schemas": {
-      "CrearItemCommand": {
+      "AsignarItemRequest": {
+        "type": "object",
+        "properties": {
+          "itemId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrearItemTrabajoCommand": {
         "type": "object",
         "properties": {
           "titulo": {
@@ -101,6 +130,10 @@
             "format": "date-time"
           },
           "relevancia": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "usuarioReferenciaId": {
             "type": "integer",
             "format": "int32"
           }

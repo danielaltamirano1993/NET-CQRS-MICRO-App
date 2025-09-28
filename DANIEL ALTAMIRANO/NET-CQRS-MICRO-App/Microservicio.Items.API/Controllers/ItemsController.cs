@@ -1,7 +1,9 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+using Microservicio.Items.API.App.Commands.AsignarItem;
+using Microservicio.Items.API.App.Dto;
+using Microservicio.Items.API.App.Queries.GetPendientesPorUsuario;
 using Microservicio.Items.API.Application.Commands;
-using Microservicio.Items.API.Application.Queries;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Microservicio.Items.API.Controllers
 {
@@ -14,38 +16,35 @@ namespace Microservicio.Items.API.Controllers
             IMediator mediator
         ) => _mediator = mediator;
 
-        [HttpPost]
-        public async Task<IActionResult> Crear( 
-            [FromBody] CrearItemCommand command
+        [HttpPost("CrearItemTrabajo")]
+        public async Task<IActionResult> CrearItemTrabajo(
+            [FromBody] CrearItemTrabajoCommand command
         )
         {
             var id = await _mediator.Send(command);
-            return CreatedAtAction(
-                nameof(ObtenerPendientesPorUsuario),
+            return Ok(
                 new { 
-                     usuarioId = 0 
-                    }, 
-                new { 
-                     ItemId = id 
+                    ItemId = id 
                     }
-                );
+            );
         }
 
-        [HttpPost("{itemId}/assign")]
+        [HttpPost("AsignarItem/{usuarioId}")]
         public async Task<IActionResult> Asignar(
-            int itemId
+            int usuarioId,
+            [FromBody] AsignarItemRequest request
         )
         {
             var result = await _mediator.Send(
-                new AsignarItemCommand(itemId)
+                new AsignarItemCommand(usuarioId, request.ItemId)
             );
-            if (result) { 
-                return Ok();
-            }
+
+            if (result) return Ok();
             return BadRequest();
         }
 
-        [HttpGet("pendientes/{usuarioId}")]
+
+        [HttpGet("ListarPendientesPorUsuario/{usuarioId}")]
         public async Task<IActionResult> ObtenerPendientesPorUsuario(
             int usuarioId
         )

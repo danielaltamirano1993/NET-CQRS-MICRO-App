@@ -1,6 +1,7 @@
 ﻿using MediatR;
+using Microservicio.Usuarios.API.App.Commands.CrearUsuario;
+using Microservicio.Usuarios.API.App.Queries.ObtenerUsuarios;
 using Microsoft.AspNetCore.Mvc;
-using Microservicio.Usuarios.API.Application.Commands;
 
 namespace Microservicio.Usuarios.API.Controllers
 {
@@ -16,10 +17,23 @@ namespace Microservicio.Usuarios.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CrearUsuario([FromBody] CrearUsuarioCommand command)
+        public async Task<IActionResult> CrearUsuario(
+            [FromBody] CrearUsuarioCommand command
+        )
         {
             var id = await _mediator.Send(command);
-            return Ok(new { UsuarioId = id });
+            return Ok(
+                new {UsuarioId = id}
+            );
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ObtenerUsuarios()
+        {
+            var usuarios = await _mediator.Send(
+                new ObtenerUsuariosQuery()
+            );
+            return Ok(usuarios);
         }
     }
 }
