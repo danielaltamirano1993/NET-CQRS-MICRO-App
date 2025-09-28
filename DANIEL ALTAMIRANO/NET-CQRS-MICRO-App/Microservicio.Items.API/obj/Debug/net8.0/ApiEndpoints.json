@@ -1,0 +1,50 @@
+[
+  {
+    "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
+    "Method": "Crear",
+    "RelativePath": "api/Items",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "command",
+        "Type": "Microservicio.Items.API.Application.Commands.CrearItemCommand",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
+    "Method": "Asignar",
+    "RelativePath": "api/Items/{itemId}/assign",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
+    "Method": "ObtenerPendientesPorUsuario",
+    "RelativePath": "api/Items/pendientes/{usuarioId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "usuarioId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]
