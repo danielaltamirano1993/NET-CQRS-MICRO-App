@@ -79,99 +79,28 @@ CREATE TABLE HistorialAsignacion (
 );
 GO
 
--- CASO 1: Usuario recién creado, sin ítems
-INSERT INTO UsuarioReferencia (UsuarioId, NombreUsuario)
-VALUES (1, 'Usuario_Caso1');
+-- CASO 1: Usuario SATURADO para nuevos ítems Relevancia=2
+INSERT INTO UsuarioReferencia (UsuarioId, NombreUsuario, ItemsPendientes, ItemsCompletados, Activo														 					
+) VALUES (1, 'Usuario_Caso1', 3, 0, 1); 
 
--- CASO 2: Usuario con ítems asignados pero ninguno completado
-INSERT INTO UsuarioReferencia (UsuarioId, NombreUsuario)
-VALUES (2, 'Usuario_Caso2');
+-- CASO 2: Usuario con menor carga pendiente, pero tiene un ítem Pendiente.
+INSERT INTO UsuarioReferencia (UsuarioId, NombreUsuario, ItemsPendientes, ItemsCompletados, Activo														 					
+) VALUES (2, 'Usuario_Caso2', 1, 0, 1);
 
--- CASO 3: Usuario con ítems asignados y algunos completados
-INSERT INTO UsuarioReferencia (UsuarioId, NombreUsuario)
-VALUES (3, 'Usuario_Caso3');
+-- CASO 3: Usuario con carga media.
+INSERT INTO UsuarioReferencia (UsuarioId, NombreUsuario, ItemsPendientes, ItemsCompletados, Activo														 					
+) VALUES (3, 'Usuario_Caso3', 2, 1, 1); 
 
--- Ítems para CASO 2: Todos pendientes
+-- items para CASO 2: Todos pendientes
 INSERT INTO ItemTrabajo (Titulo, Descripcion, FechaEntrega, Relevancia, Estado, UsuarioAsignado)
 VALUES 
-('Item_Pendiente_1', 'Descripción item 1', DATEADD(DAY, 5, GETDATE()), 2, 'Pendiente', 2),
-('Item_Pendiente_2', 'Descripción item 2', DATEADD(DAY, 7, GETDATE()), 1, 'Pendiente', 2),
-('Item_Pendiente_3', 'Descripción item 3', DATEADD(DAY, 10, GETDATE()), 2, 'Pendiente', 2);
-
--- Ítems para CASO 3: Mezcla de pendientes y completados
-INSERT INTO ItemTrabajo (Titulo, Descripcion, FechaEntrega, Relevancia, Estado, UsuarioAsignado)
-VALUES 
-('Item_En_Proceso_4', 'Descripción item 4', DATEADD(DAY, 3, GETDATE()), 2, 'Pendiente', 3),
-('Item_Completado_5', 'Descripción item 5', DATEADD(DAY, 2, GETDATE()), 1, 'Completado', 3),
-('Item_Pendiente_6', 'Descripción item 6', DATEADD(DAY, 7, GETDATE()), 2, 'Pendiente', 3),
-('Item_Pendiente_7', 'Descripción item 7', DATEADD(DAY, 5, GETDATE()), 2, 'Pendiente', 1),
-('Item_Pendiente_8', 'Descripción item 8', DATEADD(DAY, 9, GETDATE()), 2, 'Pendiente', 1);
---('Item_Pendiente_9', 'Descripción item 9', DATEADD(DAY, 11, GETDATE()), 2, 'Pendiente', 1)
-
--- Historial CASO 2
-INSERT INTO HistorialAsignacion (ItemId, UsuarioId, EstadoAsignacion)
-SELECT ItemId, 2, 'Activa'
-FROM ItemTrabajo
-WHERE UsuarioAsignado = 2;
-
--- Historial CASO 3
-INSERT INTO HistorialAsignacion (ItemId, UsuarioId, EstadoAsignacion)
-SELECT ItemId, 3, 'Activa'
-FROM ItemTrabajo
-WHERE UsuarioAsignado = 3;
-
---Actualizar contadores
-UPDATE UsuarioReferencia
-SET 
-    ItemsPendientes = (
-	SELECT 
-	COUNT(*) 
-	FROM ItemTrabajo 
-	WHERE UsuarioAsignado = UsuarioReferencia.UsuarioId 
-	AND Estado = 'Pendiente'),
-    ItemsCompletados = (
-	SELECT 
-	COUNT(*)
-	FROM ItemTrabajo 
-	WHERE UsuarioAsignado = UsuarioReferencia.UsuarioId 
-	AND Estado = 'Completado')
-WHERE UsuarioId IN (1,2,3);
-
---PRUEBAS
-SELECT *
-FROM   UsuarioReferencia;
+-- items para Usuario1 (Saturado para alta relevancia)
+('Item1_Alta_Usuario1', 'Usuario1 tiene 3 ítems ALTA', DATEADD(DAY, 10, GETDATE()), 2, 'Pendiente', 1),
+('Item2_Alta_Usuario1', 'Usuario1 tiene 3 ítems ALTA', DATEADD(DAY, 11, GETDATE()), 2, 'Pendiente', 1),
+('Item3_Alta_Usuario1', 'Usuario1 tiene 3 ítems ALTA', DATEADD(DAY, 12, GETDATE()), 2, 'Pendiente', 1),
+-- item para Usuario2 (Carga más baja)
+('Item4_Alta_Usuario2', 'Usuario2 tiene 1 ítem ALTA', DATEADD(DAY, 15, GETDATE()), 2, 'Pendiente', 2),
+-- item para Usuario3 (Carga media + 1 completado)
+('Item5_Baja_Usuario3', 'Usuario3 tiene 2 ítems (1 completado)', DATEADD(DAY, 20, GETDATE()), 1, 'Pendiente', 3),
+('Item6_Comp_Usuario3', 'Usuario3 tiene 1 completado', DATEADD(DAY, 20, GETDATE()), 1, 'Completado', 3);
 GO
-
-SELECT *
-FROM   ItemTrabajo;
-GO
-
-SELECT ItemId,
-	   UsuarioAsignado,
-	   CASE
-		  WHEN Relevancia = 1 
-			THEN 'Baja'
-		  ELSE 'Alta' 
-       END AS Relevancia,
-	   Estado
-FROM   ItemTrabajo
-WHERE  Relevancia >=2
-GO
-
-SELECT ItemId,
-	   UsuarioAsignado,
-	   CASE 
-          WHEN Relevancia = 1 
-			THEN 'Baja'
-          ELSE 'Alta' 
-       END AS Relevancia,
-	   Estado
-FROM   ItemTrabajo
-WHERE  Relevancia =1
-GO
-
-SELECT *
-FROM   HistorialAsignacion;
-GO
-
-

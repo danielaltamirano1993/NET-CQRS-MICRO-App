@@ -205,10 +205,6 @@
           "relevancia": {
             "type": "integer",
             "format": "int32"
-          },
-          "usuarioReferenciaId": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false

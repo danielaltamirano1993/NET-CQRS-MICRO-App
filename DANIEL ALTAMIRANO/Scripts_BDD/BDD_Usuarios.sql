@@ -57,22 +57,14 @@ VALUES ('Usuario_Caso3', 'usuario3@ejemplo.com', 0);
 
 
 -- Estadística para Usuario_Caso1
-INSERT INTO UsuarioEstadistica (UsuarioId, ItemsPendientes, ItemsCompletados)
-VALUES (1, 0, 0);
+--INSERT INTO UsuarioEstadistica (UsuarioId, ItemsPendientes, ItemsCompletados)
+--VALUES (1, 0, 0);
 
--- Estadística para Usuario_Caso2
-INSERT INTO UsuarioEstadistica (UsuarioId, ItemsPendientes, ItemsCompletados)
-VALUES (2, 3, 0);  -- Por ejemplo, 3 ítems pendientes y ninguno completado
+---- Estadística para Usuario_Caso2
+--INSERT INTO UsuarioEstadistica (UsuarioId, ItemsPendientes, ItemsCompletados)
+--VALUES (2, 3, 0);  -- Por ejemplo, 3 ítems pendientes y ninguno completado
 
--- Estadística para Usuario_Caso3 (usuario inactivo)
-INSERT INTO UsuarioEstadistica (UsuarioId, ItemsPendientes, ItemsCompletados)
-VALUES (3, 1, 2);  -- Por ejemplo, 1 pendiente y 2 completados
+---- Estadística para Usuario_Caso3 (usuario inactivo)
+--INSERT INTO UsuarioEstadistica (UsuarioId, ItemsPendientes, ItemsCompletados)
+--VALUES (3, 1, 2);  -- Por ejemplo, 1 pendiente y 2 completados
 
-
-SELECT *
-FROM   BDD_Usuarios.dbo.UsuarioEstadistica
-GO
-
-SELECT *
-FROM   BDD_Usuarios.dbo.Usuario
-GO
