@@ -6,37 +6,75 @@ using System.Data;
 
 namespace Microservicio.Items.API.App.Commands.AsignarItem
 {
-    public class AsignarItemCommandHandler : IRequestHandler<AsignarItemCommand, bool>
+    public class AsignarItemCommandHandler : IRequestHandler<AsignarItemCommand, int> 
     {
         private readonly ItemDbContext _context;
 
-        public AsignarItemCommandHandler(ItemDbContext context) => _context = context;
+        public AsignarItemCommandHandler(
+            ItemDbContext context
+        ) => _context = context;
 
-        public async Task<bool> Handle(AsignarItemCommand request, CancellationToken cancellationToken)
+        public async Task<int> Handle(
+            AsignarItemCommand request, 
+            CancellationToken cancellationToken
+        )
         {
-            var item = await _context.ItemTrabajo.FindAsync(request.ItemId);
-            if (item == null)
-                throw new Exception($"Item con Id {request.ItemId} no existe.");
+            var itemIdParam = new SqlParameter(
+                "@ItemId", 
+                SqlDbType.Int
+            ) 
+            { 
+                Value = request.ItemId 
+            };
 
-            var param = new SqlParameter("@ItemId", SqlDbType.Int) { Value = request.ItemId };
+            var usuarioIdOutputParam = new SqlParameter(
+                "@UsuarioAsignadoId", 
+                SqlDbType.Int
+            )
+            {
+                Direction = ParameterDirection.Output
+            };
 
             try
             {
                 await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC dbo.sp_AsignarItem @ItemId",
-                    new[] { param },
+                    "EXEC dbo.sp_AsignarItem " +
+                         "@ItemId, " +
+                         "@UsuarioAsignadoId OUTPUT",
+                    new[] { 
+                            itemIdParam, 
+                            usuarioIdOutputParam 
+                    },
                     cancellationToken
                 );
 
-                return true;
+                if (usuarioIdOutputParam.Value == DBNull.Value || 
+                    (int)usuarioIdOutputParam.Value == 0
+                )
+                {
+                    throw new Exception(
+                        "El sistema no encontró un usuario disponible " +
+                        "para la asignación automática."
+                    );
+                }
+
+                return (int)usuarioIdOutputParam.Value;
             }
             catch (SqlException ex)
             {
-                throw new Exception($"Error al asignar el ítem: {ex.Message}", ex);
+                throw new Exception(
+                    $"Error de base de datos al asignar el ítem: " +
+                    $"{ex.Message}",
+                    ex
+                );
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error inesperado: {ex.Message}", ex);
+                throw new Exception(
+                    $"Error inesperado: " +
+                    $"{ex.Message}",
+                    ex
+                );
             }
         }
     }

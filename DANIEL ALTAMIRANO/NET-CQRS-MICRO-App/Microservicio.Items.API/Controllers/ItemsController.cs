@@ -1,5 +1,7 @@
 ﻿using MediatR;
 using Microservicio.Items.API.App.Commands.AsignarItem;
+using Microservicio.Items.API.App.Commands.CambiarEstadoItem;
+using Microservicio.Items.API.App.CompletarItemTrabajo;
 using Microservicio.Items.API.App.Dto;
 using Microservicio.Items.API.App.Queries.GetPendientesPorUsuario;
 using Microservicio.Items.API.Application.Commands;
@@ -29,22 +31,84 @@ namespace Microservicio.Items.API.Controllers
             );
         }
 
-        [HttpPost("AsignarItem/{usuarioId}")]
+        [HttpPost("AsignarItem(UsuarioDinamico)")]
         public async Task<IActionResult> Asignar(
-            int usuarioId,
             [FromBody] AsignarItemRequest request
         )
         {
-            var result = await _mediator.Send(
-                new AsignarItemCommand(usuarioId, request.ItemId)
+            var usuarioAsignadoId = await _mediator.Send(
+                new AsignarItemCommand(request.ItemId)
             );
 
-            if (result) return Ok();
-            return BadRequest();
+            return Ok(
+                new
+                {
+                    Message = $"El item {request.ItemId} " +
+                              $"fue asignado automáticamente.",
+                    UsuarioAsignadoId = usuarioAsignadoId
+                }
+            );
         }
 
+        [HttpPut("{itemId}/CompletarItem/{usuarioReferenciaId}")]
+        public async Task<IActionResult> CompletarItem(
+            int itemId, 
+            int usuarioReferenciaId
+        )
+        {
+            var result = await _mediator.Send(
+                new CompletarItemTrabajoCommand(
+                    itemId, 
+                    usuarioReferenciaId
+                )
+            );
 
-        [HttpGet("ListarPendientesPorUsuario/{usuarioId}")]
+            if (!result) 
+                return NotFound(
+                    new { 
+                        Message = "Ítem no encontrado" 
+                    }
+                );
+            return Ok(
+                new { 
+                    Message = "Ítem marcado como completado" 
+                }
+            );
+        }
+
+        //Pendiente
+        //Completado
+        [HttpPut("{itemId}/CambiarEstado")]
+        public async Task<IActionResult> CambiarEstado(
+            int itemId,
+            [FromBody] CambiarEstadoItemBody body
+        )
+        {
+            var command = new CambiarEstadoItemCommand(
+                itemId,
+                body.NuevoEstado
+            );
+
+            var result = await _mediator.Send(
+                command
+            );
+
+            if (!result)
+                return NotFound(
+                    $"No se encontró el item {itemId}"
+                );
+
+            return Ok(
+                new
+                {
+                    Message = $"El estado del item {itemId} " +
+                                $"fue cambiado a " +
+                                $"{command.NuevoEstado}"
+                }
+            );
+        }
+
+        [HttpGet("ListarItemsPorUsuario/{usuarioId}")]
         public async Task<IActionResult> ObtenerPendientesPorUsuario(
             int usuarioId
         )

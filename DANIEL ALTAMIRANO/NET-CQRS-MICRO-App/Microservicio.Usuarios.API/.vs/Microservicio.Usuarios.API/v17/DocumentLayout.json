@@ -1,35 +1,19 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\",
+  "WorkspaceRootPath": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|c:\\repos\\daniel altamirano\\net-cqrs-micro-app\\microservicio.usuarios.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|c:\\repos\\daniel altamirano\\net-cqrs-micro-app\\microservicio.usuarios.api\\infrastructure\\usuariodbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|solutionrelative:infrastructure\\usuariodbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|c:\\repos\\daniel altamirano\\net-cqrs-micro-app\\microservicio.usuarios.api\\domain\\usuarioestadistica.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|solutionrelative:domain\\usuarioestadistica.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|c:\\repos\\daniel altamirano\\net-cqrs-micro-app\\microservicio.usuarios.api\\domain\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|solutionrelative:domain\\usuario.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|c:\\repos\\daniel altamirano\\net-cqrs-micro-app\\microservicio.usuarios.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|c:\\users\\impor\\onedrive\\documentos\\github\\net-cqrs-micro-app\\daniel altamirano\\net-cqrs-micro-app\\microservicio.usuarios.api\\app\\commands\\crearusuario\\crearusuariocommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8D6822FA-9804-9FCE-6F63-2AAE086A0929}|Microservicio.Usuarios.API.csproj|solutionrelative:app\\commands\\crearusuario\\crearusuariocommand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 72,
+          "DockedWidth": 200,
           "SelectedChildIndex": 1,
           "Children": [
             {
@@ -39,66 +23,14 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "launchSettings.json",
-              "DocumentMoniker": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Properties\\launchSettings.json",
-              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
-              "ToolTip": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Properties\\launchSettings.json",
-              "RelativeToolTip": "Properties\\launchSettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-09-29T03:38:48.405Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "UsuarioDbContext.cs",
-              "DocumentMoniker": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Infrastructure\\UsuarioDbContext.cs",
-              "RelativeDocumentMoniker": "Infrastructure\\UsuarioDbContext.cs",
-              "ToolTip": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Infrastructure\\UsuarioDbContext.cs",
-              "RelativeToolTip": "Infrastructure\\UsuarioDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAABUAAAAAAAAAA==",
+              "Title": "CrearUsuarioCommand.cs",
+              "DocumentMoniker": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\App\\Commands\\CrearUsuario\\CrearUsuarioCommand.cs",
+              "RelativeDocumentMoniker": "App\\Commands\\CrearUsuario\\CrearUsuarioCommand.cs",
+              "ToolTip": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\App\\Commands\\CrearUsuario\\CrearUsuarioCommand.cs",
+              "RelativeToolTip": "App\\Commands\\CrearUsuario\\CrearUsuarioCommand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-29T03:05:28.927Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "UsuarioEstadistica.cs",
-              "DocumentMoniker": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Domain\\UsuarioEstadistica.cs",
-              "RelativeDocumentMoniker": "Domain\\UsuarioEstadistica.cs",
-              "ToolTip": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Domain\\UsuarioEstadistica.cs",
-              "RelativeToolTip": "Domain\\UsuarioEstadistica.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-29T01:50:44.007Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Usuario.cs",
-              "DocumentMoniker": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Domain\\Usuario.cs",
-              "RelativeDocumentMoniker": "Domain\\Usuario.cs",
-              "ToolTip": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Domain\\Usuario.cs",
-              "RelativeToolTip": "Domain\\Usuario.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-29T01:50:21.761Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Usuarios.API\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-09-29T01:49:57.843Z",
+              "WhenOpened": "2025-09-30T01:34:06.487Z",
               "EditorCaption": ""
             }
           ]

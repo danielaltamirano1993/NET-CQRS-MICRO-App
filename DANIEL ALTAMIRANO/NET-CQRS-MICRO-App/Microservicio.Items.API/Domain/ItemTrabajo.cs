@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Microservicio.Items.API.Domain
 {
@@ -33,6 +34,7 @@ namespace Microservicio.Items.API.Domain
         public UsuarioReferencia? Usuario { get; set; }
 
         // Relaciones
-        public ICollection<HistorialAsignacion>? Historiales { get; set; }
+        [NotMapped]
+        public ICollection<HistorialAsignacion> Historiales { get; set; }
     }
 }

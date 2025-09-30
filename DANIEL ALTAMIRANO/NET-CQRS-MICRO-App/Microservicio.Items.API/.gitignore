@@ -1,0 +1,25 @@
+# Build and object directories
+[Bb]in/
+[Oo]bj/
+[Rr]elease/
+
+# Visual Studio / IDE temporary files and directories
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vshost.*
+
+# NuGet Packages
+*.nupkg
+**/packages/*
+
+# Azure Web App publish settings
+Publish/
+*.pubxml
+*.azurePubxml
+
+# Logs and temporary files
+*.log
+*.tmp

@@ -1,14 +1,14 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\",
+  "WorkspaceRootPath": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\",
   "Documents": [],
   "DocumentGroupContainers": [
     {
-      "Orientation": 1,
+      "Orientation": 0,
       "VerticalTabListWidth": 256,
       "DocumentGroups": [
         {
-          "DockedHeight": 63,
+          "DockedWidth": 200,
           "SelectedChildIndex": -1,
           "Children": [
             {

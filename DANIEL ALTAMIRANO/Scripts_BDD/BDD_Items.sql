@@ -47,7 +47,6 @@ CREATE TABLE ItemTrabajo (
 					CHECK (
 							Estado IN (
 										'Pendiente',
-										'En Proceso',
 										'Completado'
 									  )
 						  ),
@@ -102,9 +101,12 @@ VALUES
 -- Ítems para CASO 3: Mezcla de pendientes y completados
 INSERT INTO ItemTrabajo (Titulo, Descripcion, FechaEntrega, Relevancia, Estado, UsuarioAsignado)
 VALUES 
-('Item_En_Proceso_1', 'Descripción item 1', DATEADD(DAY, 3, GETDATE()), 2, 'En Proceso', 3),
-('Item_Completado_1', 'Descripción item 2', DATEADD(DAY, 2, GETDATE()), 1, 'Completado', 3),
-('Item_Pendiente_1', 'Descripción item 3', DATEADD(DAY, 7, GETDATE()), 2, 'Pendiente', 3);
+('Item_En_Proceso_4', 'Descripción item 4', DATEADD(DAY, 3, GETDATE()), 2, 'Pendiente', 3),
+('Item_Completado_5', 'Descripción item 5', DATEADD(DAY, 2, GETDATE()), 1, 'Completado', 3),
+('Item_Pendiente_6', 'Descripción item 6', DATEADD(DAY, 7, GETDATE()), 2, 'Pendiente', 3),
+('Item_Pendiente_7', 'Descripción item 7', DATEADD(DAY, 5, GETDATE()), 2, 'Pendiente', 1),
+('Item_Pendiente_8', 'Descripción item 8', DATEADD(DAY, 9, GETDATE()), 2, 'Pendiente', 1);
+--('Item_Pendiente_9', 'Descripción item 9', DATEADD(DAY, 11, GETDATE()), 2, 'Pendiente', 1)
 
 -- Historial CASO 2
 INSERT INTO HistorialAsignacion (ItemId, UsuarioId, EstadoAsignacion)
@@ -135,13 +137,37 @@ SET
 	AND Estado = 'Completado')
 WHERE UsuarioId IN (1,2,3);
 
-
+--PRUEBAS
 SELECT *
 FROM   UsuarioReferencia;
 GO
 
 SELECT *
 FROM   ItemTrabajo;
+GO
+
+SELECT ItemId,
+	   UsuarioAsignado,
+	   CASE
+		  WHEN Relevancia = 1 
+			THEN 'Baja'
+		  ELSE 'Alta' 
+       END AS Relevancia,
+	   Estado
+FROM   ItemTrabajo
+WHERE  Relevancia >=2
+GO
+
+SELECT ItemId,
+	   UsuarioAsignado,
+	   CASE 
+          WHEN Relevancia = 1 
+			THEN 'Baja'
+          ELSE 'Alta' 
+       END AS Relevancia,
+	   Estado
+FROM   ItemTrabajo
+WHERE  Relevancia =1
 GO
 
 SELECT *

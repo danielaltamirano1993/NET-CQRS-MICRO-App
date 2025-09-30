@@ -1,17 +1,54 @@
 [
   {
     "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
-    "Method": "Asignar",
-    "RelativePath": "api/Items/AsignarItem/{usuarioId}",
-    "HttpMethod": "POST",
+    "Method": "CambiarEstado",
+    "RelativePath": "api/Items/{itemId}/CambiarEstado",
+    "HttpMethod": "PUT",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "usuarioId",
+        "Name": "itemId",
         "Type": "System.Int32",
         "IsRequired": true
       },
+      {
+        "Name": "body",
+        "Type": "Microservicio.Items.API.App.Dto.CambiarEstadoItemBody",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
+    "Method": "CompletarItem",
+    "RelativePath": "api/Items/{itemId}/CompletarItem/{usuarioReferenciaId}",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "itemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "usuarioReferenciaId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
+    "Method": "Asignar",
+    "RelativePath": "api/Items/AsignarItem(UsuarioDinamico)",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
       {
         "Name": "request",
         "Type": "Microservicio.Items.API.App.Dto.AsignarItemRequest",
@@ -39,7 +76,7 @@
   {
     "ContainingType": "Microservicio.Items.API.Controllers.ItemsController",
     "Method": "ObtenerPendientesPorUsuario",
-    "RelativePath": "api/Items/ListarPendientesPorUsuario/{usuarioId}",
+    "RelativePath": "api/Items/ListarItemsPorUsuario/{usuarioId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

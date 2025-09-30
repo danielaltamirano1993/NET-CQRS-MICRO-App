@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj": {}
+    "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj": {}
   },
   "projects": {
-    "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj": {
+    "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj",
+        "projectUniqueName": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj",
         "projectName": "Microservicio.Items.API",
-        "projectPath": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj",
+        "projectPath": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\Microservicio.Items.API.csproj",
         "packagesPath": "C:\\Users\\impor\\.nuget\\packages\\",
-        "outputPath": "C:\\repos\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\obj\\",
+        "outputPath": "C:\\Users\\impor\\OneDrive\\Documentos\\Github\\NET-CQRS-MICRO-App\\DANIEL ALTAMIRANO\\NET-CQRS-MICRO-App\\Microservicio.Items.API\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
