@@ -2,6 +2,10 @@ USE BDD_Items;
 GO
 
 --PRUEBAS 
+SELECT *
+FROM   BDD_Usuarios.dbo.Usuario
+GO
+
 --Actualizar contadores (Necesaria para verificar TotalItemTrabajo)
 UPDATE UsuarioReferencia
 SET 
