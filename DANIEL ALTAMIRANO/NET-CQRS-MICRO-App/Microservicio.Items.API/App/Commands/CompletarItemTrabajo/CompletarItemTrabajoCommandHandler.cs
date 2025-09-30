@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microservicio.Items.API.Infrastructure;
 
-namespace Microservicio.Items.API.App.CompletarItemTrabajo
+namespace Microservicio.Items.API.App.Commands.CompletarItemTrabajo
 {
     public class CompletarItemTrabajoCommandHandler
         : IRequestHandler<CompletarItemTrabajoCommand, bool>

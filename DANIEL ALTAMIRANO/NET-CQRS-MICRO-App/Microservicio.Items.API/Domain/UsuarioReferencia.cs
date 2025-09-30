@@ -14,8 +14,7 @@ namespace Microservicio.Items.API.Domain
         public int ItemsPendientes { get; set; } = 0;
         public int ItemsCompletados { get; set; } = 0;
         public bool Activo { get; set; } = true;
-
-        // Relaciones
+                
         [JsonIgnore]
         public ICollection<ItemTrabajo>? ItemsAsignados { get; set; }
         [JsonIgnore]

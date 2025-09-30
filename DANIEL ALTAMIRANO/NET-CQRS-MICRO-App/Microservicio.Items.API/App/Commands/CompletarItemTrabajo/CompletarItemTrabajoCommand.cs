@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Microservicio.Items.API.App.CompletarItemTrabajo
+namespace Microservicio.Items.API.App.Commands.CompletarItemTrabajo
 {
     public record CompletarItemTrabajoCommand(
         int ItemId, 

@@ -29,11 +29,9 @@ namespace Microservicio.Items.API.Domain
         [MaxLength(20)]
         public string Estado { get; set; } = "Pendiente"; // Pendiente, En Proceso, Completado
 
-        // Clave foránea
         public int? UsuarioAsignado { get; set; }
         public UsuarioReferencia? Usuario { get; set; }
 
-        // Relaciones
         [NotMapped]
         public ICollection<HistorialAsignacion> Historiales { get; set; }
     }

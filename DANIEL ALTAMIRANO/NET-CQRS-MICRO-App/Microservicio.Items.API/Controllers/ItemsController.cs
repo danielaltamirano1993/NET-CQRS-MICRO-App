@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microservicio.Items.API.App.Commands.AsignarItem;
 using Microservicio.Items.API.App.Commands.CambiarEstadoItem;
-using Microservicio.Items.API.App.CompletarItemTrabajo;
+using Microservicio.Items.API.App.Commands.CompletarItemTrabajo;
 using Microservicio.Items.API.App.Dto;
 using Microservicio.Items.API.App.Queries.GetPendientesPorUsuario;
 using Microservicio.Items.API.Application.Commands;
