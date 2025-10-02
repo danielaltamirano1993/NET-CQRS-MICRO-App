@@ -9,12 +9,17 @@ namespace Microservicio.Items.API.App.Commands.CompletarItemTrabajo
     {
         private readonly ItemDbContext _context;
 
-        public CompletarItemTrabajoCommandHandler(ItemDbContext context)
+        public CompletarItemTrabajoCommandHandler(
+            ItemDbContext context
+        )
         {
             _context = context;
         }
 
-        public async Task<bool> Handle(CompletarItemTrabajoCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(
+            CompletarItemTrabajoCommand request, 
+            CancellationToken cancellationToken
+        )
         {
             var item = await _context.ItemTrabajo
                 .Include(i => i.Historiales)

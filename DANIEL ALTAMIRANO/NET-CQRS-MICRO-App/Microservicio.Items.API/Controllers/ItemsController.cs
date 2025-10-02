@@ -23,7 +23,6 @@ namespace Microservicio.Items.API.Controllers
             [FromBody] CrearItemTrabajoCommand command
         )
         {
-            // El Command ahora incluye la lógica de asignación, saturación y urgencia.
             var id = await _mediator.Send(command);
             return Ok(
                 new
@@ -93,13 +92,11 @@ namespace Microservicio.Items.API.Controllers
             );
         }
 
-        // 🛑 Nombre del endpoint más conciso y descriptivo
         [HttpGet("PendientesPorUsuario/{usuarioId}")]
         public async Task<IActionResult> ObtenerPendientesPorUsuario(
             int usuarioId
         )
         {
-            // La lógica de consulta (ordenamiento y filtro) ahora está en el Handler con LINQ.
             var items = await _mediator.Send(
                 new GetPendientesPorUsuarioQuery(
                     usuarioId

@@ -22,24 +22,18 @@ namespace Microservicio.Items.API.App.Queries.GetPendientesPorUsuario
             CancellationToken cancellationToken
         )
         {
-            // 🛑 Lógica del SP refactorizada a LINQ:
-            // 1. Filtrar por UsuarioAsignado y Estado
             var query = _context.ItemTrabajo
                 .Where(i => i.UsuarioAsignado == request.UsuarioId &&
                             i.Estado != "Completado");
 
-            // 2. Ordenar por FechaEntrega ASC y Relevancia DESC
             query = query
                 .OrderBy(i => i.FechaEntrega)
                 .ThenByDescending(i => i.Relevancia);
 
-            // 3. Incluir las referencias (Opcional, si son necesarias)
-            // Esto reemplaza las cargas manuales con .LoadAsync()
             query = query
                 .Include(i => i.Usuario)
                 .Include(i => i.Historiales);
 
-            // 4. Ejecutar la consulta
             return await query.ToListAsync(cancellationToken);
         }
     }
