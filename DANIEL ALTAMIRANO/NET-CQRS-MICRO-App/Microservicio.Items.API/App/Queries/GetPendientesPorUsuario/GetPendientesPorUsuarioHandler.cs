@@ -1,8 +1,11 @@
 ﻿using MediatR;
-using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microservicio.Items.API.Domain;
 using Microservicio.Items.API.Infrastructure;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microservicio.Items.API.App.Queries.GetPendientesPorUsuario
 {
@@ -19,43 +22,25 @@ namespace Microservicio.Items.API.App.Queries.GetPendientesPorUsuario
             CancellationToken cancellationToken
         )
         {
-            var param = new SqlParameter(
-                "@UsuarioId",
-                request.UsuarioId
-            );
+            // 🛑 Lógica del SP refactorizada a LINQ:
+            // 1. Filtrar por UsuarioAsignado y Estado
+            var query = _context.ItemTrabajo
+                .Where(i => i.UsuarioAsignado == request.UsuarioId &&
+                            i.Estado != "Completado");
 
-            var results = await _context.ItemTrabajoSqlResults 
-                .FromSqlRaw("EXEC dbo.sp_ListarPendientesPorUsuario " +
-                            "@UsuarioId", 
-                            param
-                )
-                .ToListAsync(cancellationToken);
+            // 2. Ordenar por FechaEntrega ASC y Relevancia DESC
+            query = query
+                .OrderBy(i => i.FechaEntrega)
+                .ThenByDescending(i => i.Relevancia);
 
-            var items = results.Select(r => new ItemTrabajo
-            {
-                ItemId = r.ItemId,
-                Titulo = r.Titulo,
-                Descripcion = r.Descripcion,
-                FechaCreacion = r.FechaCreacion,
-                FechaEntrega = r.FechaEntrega,
-                Relevancia = r.Relevancia,
-                Estado = r.Estado,
-                UsuarioAsignado = r.UsuarioAsignado,
-                Historiales = new List<HistorialAsignacion>(), 
-            }).ToList();
+            // 3. Incluir las referencias (Opcional, si son necesarias)
+            // Esto reemplaza las cargas manuales con .LoadAsync()
+            query = query
+                .Include(i => i.Usuario)
+                .Include(i => i.Historiales);
 
-            foreach (var item in items)
-            {
-                _context.Attach(item);
-                await _context.Entry(item)
-                    .Reference(i => i.Usuario)
-                    .LoadAsync(cancellationToken);
-
-                await _context.Entry(item)
-                    .Collection(i => i.Historiales)
-                    .LoadAsync(cancellationToken);
-            }
-            return items;
+            // 4. Ejecutar la consulta
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

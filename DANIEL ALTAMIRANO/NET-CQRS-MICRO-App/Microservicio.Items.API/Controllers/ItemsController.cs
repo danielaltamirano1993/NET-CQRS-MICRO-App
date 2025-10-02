@@ -1,10 +1,10 @@
 ﻿using MediatR;
-using Microservicio.Items.API.App.Commands.AsignarItem;
 using Microservicio.Items.API.App.Commands.CambiarEstadoItem;
 using Microservicio.Items.API.App.Commands.CompletarItemTrabajo;
 using Microservicio.Items.API.App.Dto;
 using Microservicio.Items.API.App.Queries.GetPendientesPorUsuario;
-using Microservicio.Items.API.Application.Commands;
+using Microservicio.Items.API.App.Commands;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace Microservicio.Items.API.Controllers
@@ -23,55 +23,40 @@ namespace Microservicio.Items.API.Controllers
             [FromBody] CrearItemTrabajoCommand command
         )
         {
+            // El Command ahora incluye la lógica de asignación, saturación y urgencia.
             var id = await _mediator.Send(command);
-            return Ok(
-                new { 
-                    ItemId = id 
-                    }
-            );
-        }
-
-        [HttpPost("AsignarItem(UsuarioDinamico)")]
-        public async Task<IActionResult> Asignar(
-            [FromBody] AsignarItemRequest request
-        )
-        {
-            var usuarioAsignadoId = await _mediator.Send(
-                new AsignarItemCommand(request.ItemId)
-            );
-
             return Ok(
                 new
                 {
-                    Message = $"El item {request.ItemId} " +
-                              $"fue asignado automáticamente.",
-                    UsuarioAsignadoId = usuarioAsignadoId
+                    ItemId = id
                 }
             );
         }
 
         [HttpPut("{itemId}/CompletarItem/{usuarioReferenciaId}")]
         public async Task<IActionResult> CompletarItem(
-            int itemId, 
+            int itemId,
             int usuarioReferenciaId
         )
         {
             var result = await _mediator.Send(
                 new CompletarItemTrabajoCommand(
-                    itemId, 
+                    itemId,
                     usuarioReferenciaId
                 )
             );
 
-            if (!result) 
+            if (!result)
                 return NotFound(
-                    new { 
-                        Message = "Ítem no encontrado" 
+                    new
+                    {
+                        Message = "Ítem no encontrado"
                     }
                 );
             return Ok(
-                new { 
-                    Message = "Ítem marcado como completado" 
+                new
+                {
+                    Message = "Ítem marcado como completado"
                 }
             );
         }
@@ -108,11 +93,13 @@ namespace Microservicio.Items.API.Controllers
             );
         }
 
-        [HttpGet("ListarItemsPorUsuario/{usuarioId}")]
+        // 🛑 Nombre del endpoint más conciso y descriptivo
+        [HttpGet("PendientesPorUsuario/{usuarioId}")]
         public async Task<IActionResult> ObtenerPendientesPorUsuario(
             int usuarioId
         )
         {
+            // La lógica de consulta (ordenamiento y filtro) ahora está en el Handler con LINQ.
             var items = await _mediator.Send(
                 new GetPendientesPorUsuarioQuery(
                     usuarioId

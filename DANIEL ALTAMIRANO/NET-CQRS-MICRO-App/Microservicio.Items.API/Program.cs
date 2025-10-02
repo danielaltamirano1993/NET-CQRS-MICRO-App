@@ -1,6 +1,7 @@
 using MediatR;
-using Microsoft.EntityFrameworkCore;
+using Microservicio.Items.API.App.Services;
 using Microservicio.Items.API.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +15,8 @@ builder.Services.AddDbContext<ItemDbContext>(options =>
 //            .EnableSensitiveDataLogging()  
 //            .LogTo(Console.WriteLine, LogLevel.Information));
 builder.Services.AddMediatR(typeof(Program).Assembly);
+
+builder.Services.AddScoped<AsignacionService>();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
