@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 
 namespace Microservicio.Items.API.App.Commands
 {
@@ -16,7 +16,7 @@ namespace Microservicio.Items.API.App.Commands
         private readonly AsignacionService _asignacionService;
 
         public CrearItemTrabajoCommandHandler(
-            ItemDbContext context, 
+            ItemDbContext context,
             AsignacionService asignacionService
         )
         {
@@ -25,25 +25,43 @@ namespace Microservicio.Items.API.App.Commands
         }
 
         public async Task<int> Handle(
-            CrearItemTrabajoCommand request, 
+            CrearItemTrabajoCommand request,
             CancellationToken cancellationToken
         )
         {
-            int? usuarioId = await _asignacionService.SeleccionarUsuarioAsignacionAsync(
+            int? usuarioId =
+                await _asignacionService.SeleccionarUsuarioAsignacionAsync(
                 request.FechaEntrega,
                 request.Relevancia
             );
+
+            if (!usuarioId.HasValue)
+            {
+                // FALLBACK: Si la lógica de asignación falla, buscamos el primer UsuarioId activo.
+                // Usamos 'u.Activo == true' para asegurar un mapeo correcto del tipo BIT (1) de SQL.
+                usuarioId = await _context.UsuarioReferencia
+                                        .Where(u => u.Activo == true)
+                                        .OrderBy(u => u.UsuarioId)
+                                        .Select(u => (int?)u.UsuarioId)
+                                        .FirstOrDefaultAsync(cancellationToken);
+            }
 
             if (!usuarioId.HasValue)
                 throw new Exception(
                     "No hay usuario disponible para la asignación según las reglas de negocio."
                 );
 
-            await using IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+            await using IDbContextTransaction transaction =
+                await _context.Database.BeginTransactionAsync(cancellationToken);
 
             try
             {
-                var usuario = await _context.UsuarioReferencia.FindAsync(usuarioId.Value);
+                // Buscamos la entidad UsuarioReferencia para la asignación y actualización del contador.
+                var usuario =
+                    await _context.UsuarioReferencia.FindAsync(usuarioId.Value);
+
+                // Eliminamos la búsqueda de EstadisticaUsuario, ya que el contador está en UsuarioReferencia.
+
 
                 if (usuario == null)
                 {
@@ -53,6 +71,9 @@ namespace Microservicio.Items.API.App.Commands
                     );
                 }
 
+                // Eliminamos la verificación de estadísticas redundante.
+
+
                 var item = new ItemTrabajo
                 {
                     Titulo = request.Titulo,
@@ -61,11 +82,12 @@ namespace Microservicio.Items.API.App.Commands
                     FechaEntrega = request.FechaEntrega,
                     Relevancia = request.Relevancia,
                     Estado = "Pendiente",
-                    UsuarioAsignado = usuarioId.Value 
+                    UsuarioAsignado = usuarioId.Value
                 };
 
                 _context.ItemTrabajo.Add(item);
 
+                // **ACTUALIZACIÓN DE CONTADOR EN LA ENTIDAD CORRECTA (UsuarioReferencia)**
                 usuario.ItemsPendientes += 1;
 
                 var historial = new HistorialAsignacion
@@ -73,7 +95,7 @@ namespace Microservicio.Items.API.App.Commands
                     UsuarioId = usuarioId.Value,
                     FechaAsignacion = DateTime.UtcNow,
                     EstadoAsignacion = "Activa",
-                    Item = item 
+                    Item = item
                 };
                 _context.HistorialAsignacion.Add(historial);
 

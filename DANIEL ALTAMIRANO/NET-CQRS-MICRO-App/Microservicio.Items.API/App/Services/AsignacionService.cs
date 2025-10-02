@@ -17,60 +17,90 @@ namespace Microservicio.Items.API.App.Services
 
         public async Task<int?> SeleccionarUsuarioAsignacionAsync(DateTime fechaEntrega, byte relevancia)
         {
-            // La lógica de cálculo de ItemsAltaRelevancia se mueve aquí para ser visible en C#.
-            var usuarios = await _context.UsuarioReferencia
+            // 1. Obtener datos de UsuarioReferencia activos.
+            var usuariosActivos = await _context.UsuarioReferencia
                 .Where(u => u.Activo)
+                .ToListAsync();
+
+            if (!usuariosActivos.Any())
+            {
+                // Si no hay usuarios activos en absoluto, regresamos null.
+                return null;
+            }
+
+            // 2. Obtener todos los ítems de Alta Relevancia (Relevancia = 2) pendientes
+            // y agruparlos por usuario para calcular la saturación en memoria.
+            var altaRelevanciaPendientes = await _context.ItemTrabajo
+                .Where(i => i.Estado == "Pendiente" && i.Relevancia == 2)
+                .GroupBy(i => i.UsuarioAsignado)
+                .Select(g => new { UsuarioId = g.Key, Count = g.Count() })
+                .ToDictionaryAsync(x => x.UsuarioId, x => x.Count);
+
+
+            var fechaUrgente = DateTime.UtcNow.AddDays(3);
+            int? usuarioId = null;
+
+            // Mapear los usuarios activos con su conteo de ítems de Alta Relevancia
+            var usuariosConCarga = usuariosActivos
                 .Select(u => new
                 {
                     u.UsuarioId,
                     u.ItemsPendientes,
                     u.ItemsCompletados,
-                    // Subconsulta para contar ítems de Alta Relevancia Pendientes (Saturación)
-                    ItemsAltaRelevancia = _context.ItemTrabajo
-                        .Count(i => i.UsuarioAsignado == u.UsuarioId
-                                 && i.Estado == "Pendiente"
-                                 && i.Relevancia == 2) // Relevancia = 2 es Alta
+                    ItemsAltaRelevancia = altaRelevanciaPendientes.GetValueOrDefault(u.UsuarioId)
                 })
-                .ToListAsync();
+                .ToList();
 
-            // Definición de Urgencia (menos de tres días desde la fecha actual)
-            var fechaUrgente = DateTime.UtcNow.AddDays(3);
 
-            // 🛑 PRIORIDAD 1: Urgencia (Fecha de entrega próxima a vencer)
+            // 🛑 PRIORIDAD 1: Urgencia (FechaEntrega < 3 días)
             if (fechaEntrega < fechaUrgente)
             {
-                // Asignar al usuario con menor cantidad de ítems pendientes, independientemente de la relevancia.
-                return usuarios
+                // Asignar al usuario con menor carga pendiente
+                usuarioId = usuariosConCarga
                     .OrderBy(u => u.ItemsPendientes)
                     .ThenBy(u => u.ItemsCompletados)
                     .Select(u => (int?)u.UsuarioId)
                     .FirstOrDefault();
             }
 
-            // 🛑 PRIORIDAD 2: Relevancia y Saturación
-            if (relevancia == 2) // Alta Relevancia
+            // 🛑 PRIORIDAD 2: Relevancia Alta
+            else if (relevancia == 2)
             {
-                // Filtrar usuarios saturados (más de 3 ítems altamente relevantes pendientes)
-                var noSaturados = usuarios
+                // Intento 1: Filtrar No Saturados (ItemsAltaRelevancia <= 3)
+                var noSaturados = usuariosConCarga
                     .Where(u => u.ItemsAltaRelevancia <= 3)
                     .ToList();
 
-                // Asignar al usuario no saturado con menor lista de pendientes
-                return noSaturados
+                // Asignar al no saturado con menor lista de pendientes
+                usuarioId = noSaturados
                     .OrderBy(u => u.ItemsPendientes)
                     .ThenBy(u => u.ItemsCompletados)
                     .Select(u => (int?)u.UsuarioId)
                     .FirstOrDefault();
+
+                // FALLBACK: Si todos están saturados, se asigna al menos cargado de todos.
+                if (usuarioId == null)
+                {
+                    usuarioId = usuariosConCarga
+                        .OrderBy(u => u.ItemsPendientes)
+                        .ThenBy(u => u.ItemsCompletados)
+                        .Select(u => (int?)u.UsuarioId)
+                        .FirstOrDefault();
+                }
             }
-            else // Baja Relevancia (relevancia = 1)
+
+            // 🛑 PRIORIDAD 3: Baja Relevancia (relevancia = 1)
+            else // Relevancia = 1
             {
                 // Asignar al usuario con menor lista de pendientes (sin filtro de saturación)
-                return usuarios
+                usuarioId = usuariosConCarga
                     .OrderBy(u => u.ItemsPendientes)
                     .ThenBy(u => u.ItemsCompletados)
                     .Select(u => (int?)u.UsuarioId)
                     .FirstOrDefault();
             }
+
+            return usuarioId;
         }
     }
 }

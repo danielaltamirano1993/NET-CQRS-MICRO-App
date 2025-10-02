@@ -25,7 +25,7 @@ namespace Microservicio.Usuarios.API.Application.Commands
             {
                 NombreUsuario = request.NombreUsuario,
                 Correo        = request.Correo,
-                Activo        = true,
+                Activo        = request.Activo,
                 FechaRegistro = DateTime.UtcNow
             };
 

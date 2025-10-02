@@ -1,23 +1,45 @@
-curl -X 'GET' \
-  'http://localhost:5191/api/Usuario' \
-  -H 'accept: */*'
  -------------------------------------------------------------------------------------------- 
-  curl -X 'POST' \
+curl -X 'POST' \
   'http://localhost:5191/api/Usuario' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "nombreUsuario": "Usuario_Caso4",
-  "correo": "usuario4@ejemplo.com"
+  "nombreUsuario": "Usuario_Caso1",
+  "correo": "usuario@email.com",
+  "activo": true
+}'
+
+curl -X 'POST' \
+  'http://localhost:5191/api/Usuario' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "nombreUsuario": "Usuario_Caso2",
+  "correo": "usuario2@email.com",
+  "activo": true
+}'
+
+curl -X 'POST' \
+  'http://localhost:5191/api/Usuario' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "nombreUsuario": "Usuario_Caso3",
+  "correo": "usuario3@email.com",
+  "activo": true
 }'
 ---------------------------------------------------------------------------------------------
-curl -X 'POST' 
+curl -X 'GET' \
+  'http://localhost:5191/api/Usuario' \
+  -H 'accept: */*'
+---------------------------------------------------------------------------------------------
+curl -X 'POST' \
   'http://localhost:5000/api/Items/CrearItemTrabajo' \
   -H 'accept: */*' \
   -H 'Content-Type: application/json' \
   -d '{
-  "titulo": "item # ",
-  "descripcion": "descripcion item #",
+  "titulo": "item # 1",
+  "descripcion": "descripcion item #1",
   "fechaEntrega": "2025-09-30T16:49:18.033Z",
   "relevancia": 1
 }'
