@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microservicio.Items.API.Infrastructure;
+using System.Threading;
+using System.Threading.Tasks;
+using Microservicio.Items.API.Domain;
 
 namespace Microservicio.Items.API.App.Commands.CompletarItemTrabajo
 {
@@ -17,28 +20,26 @@ namespace Microservicio.Items.API.App.Commands.CompletarItemTrabajo
         }
 
         public async Task<bool> Handle(
-            CompletarItemTrabajoCommand request, 
+            CompletarItemTrabajoCommand request,
             CancellationToken cancellationToken
         )
         {
             var item = await _context.ItemTrabajo
                 .Include(i => i.Historiales)
                 .FirstOrDefaultAsync(
-                    i => i.ItemId == request.ItemId, 
+                    i => i.ItemId == request.ItemId,
                     cancellationToken
                 );
 
             if (item == null) return false;
-                        
-            item.Estado = "Completado";
 
+            item.Estado = "Completado";
             item.Historiales.Add(
-                new Domain.HistorialAsignacion
-                {
-                    ItemId = item.ItemId,
-                    UsuarioId = request.UsuarioReferenciaId,
-                    FechaAsignacion = DateTime.UtcNow
-                }
+                HistorialAsignacion.Crear(
+                    itemTrabajoId: item.ItemId,
+                    usuarioId: request.UsuarioReferenciaId,
+                    comentarios: "Ítem completado" 
+                )
             );
 
             await _context.SaveChangesAsync(

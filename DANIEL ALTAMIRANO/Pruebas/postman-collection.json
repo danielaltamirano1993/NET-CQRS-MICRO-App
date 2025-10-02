@@ -43,6 +43,23 @@ curl -X 'POST' \
   "fechaEntrega": "2025-09-30T16:49:18.033Z",
   "relevancia": 1
 }'
+curl -X 'POST' \
+  'http://localhost:5000/api/Items/CrearItemTrabajo' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{  "titulo": "item # 2",
+  "descripcion": "descripcion item #2",
+  "fechaEntrega": "2025-09-30T16:49:18.033Z",
+  "relevancia": 1
+  }'
+  curl -X 'POST' \
+  'http://localhost:5000/api/Items/CrearItemTrabajo' \
+  -H 'accept: */*' \
+  -H 'Content-Type: application/json' \
+  -d '{  "titulo": "item # 3",
+  "descripcion": "descripcion item #3",
+  "fechaEntrega": "2025-09-30T16:49:18.033Z",
+  "relevancia": 1}'
 ---------------------------------------------------------------------------------------------
 curl -X 'POST' \
   'http://localhost:5000/api/Items/AsignarItem(UsuarioDinamico)' \

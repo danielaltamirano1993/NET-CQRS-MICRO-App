@@ -1,23 +1,23 @@
 using MediatR;
 using Microservicio.Items.API.App.Services;
+using Microservicio.Items.API.App.Services.Contracts;
 using Microservicio.Items.API.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//builder.Logging.ClearProviders();
-//builder.Logging.AddConsole(); 
-//builder.Logging.AddDebug();   
-//builder.Logging.SetMinimumLevel(LogLevel.Warning);
-
 builder.Services.AddDbContext<ItemDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//            .EnableSensitiveDataLogging()  
-//            .LogTo(Console.WriteLine, LogLevel.Information));
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
-builder.Services.AddScoped<AsignacionService>();
+builder.Services.AddScoped<IAsignacionService, AsignacionService>();
+
+builder.Services.AddHttpClient<ISincronizacionUsuarioService, SincronizacionUsuarioService>(client =>
+{
+    client.BaseAddress = new Uri("http://localhost:5191/");
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -27,9 +27,8 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ItemDbContext>();
-    await SeedData.EnsureSeedData(context);
+    var syncService = scope.ServiceProvider.GetRequiredService<ISincronizacionUsuarioService>();
+    syncService.SincronizarUsuariosAsync().Wait();
 }
 
 if (app.Environment.IsDevelopment())

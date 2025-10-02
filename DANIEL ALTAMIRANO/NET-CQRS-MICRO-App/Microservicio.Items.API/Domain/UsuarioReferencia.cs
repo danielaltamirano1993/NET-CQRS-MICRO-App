@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microservicio.Items.API.Domain;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -16,8 +17,11 @@ namespace Microservicio.Items.API.Domain
         public bool Activo { get; set; } = true;
                 
         [JsonIgnore]
-        public ICollection<ItemTrabajo>? ItemsAsignados { get; set; }
+        public ICollection<ItemTrabajo>? ItemsAsignados { get; set; } = new List<ItemTrabajo>();
         [JsonIgnore]
-        public ICollection<HistorialAsignacion>? Historiales { get; set; }
+        public ICollection<HistorialAsignacion>? Historiales { get; set; } = new List<HistorialAsignacion>();
     }
 }
+
+
+

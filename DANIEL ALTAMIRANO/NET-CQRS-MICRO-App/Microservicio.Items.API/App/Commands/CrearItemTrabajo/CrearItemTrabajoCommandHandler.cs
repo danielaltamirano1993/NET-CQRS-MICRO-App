@@ -1,23 +1,22 @@
 ﻿using MediatR;
-using Microservicio.Items.API.App.Services;
+using Microservicio.Items.API.App.Services.Contracts;
 using Microservicio.Items.API.Domain;
 using Microservicio.Items.API.Infrastructure;
-using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 
-namespace Microservicio.Items.API.App.Commands
+namespace Microservicio.Items.API.App.Commands.CrearItemTrabajo
 {
     public class CrearItemTrabajoCommandHandler : IRequestHandler<CrearItemTrabajoCommand, int>
     {
         private readonly ItemDbContext _context;
-        private readonly AsignacionService _asignacionService;
+        private readonly IAsignacionService _asignacionService;
 
         public CrearItemTrabajoCommandHandler(
-            ItemDbContext context,
-            AsignacionService asignacionService
+            ItemDbContext context, 
+            IAsignacionService asignacionService
         )
         {
             _context = context;
@@ -25,89 +24,68 @@ namespace Microservicio.Items.API.App.Commands
         }
 
         public async Task<int> Handle(
-            CrearItemTrabajoCommand request,
+            CrearItemTrabajoCommand request, 
             CancellationToken cancellationToken
         )
         {
-            int? usuarioId =
-                await _asignacionService.SeleccionarUsuarioAsignacionAsync(
+            var item = ItemTrabajo.Crear(
+                request.Titulo,
+                request.Descripcion,
                 request.FechaEntrega,
-                request.Relevancia
-            );
+                request.Relevancia);
 
-            if (!usuarioId.HasValue)
-            {
-                // FALLBACK: Si la lógica de asignación falla, buscamos el primer UsuarioId activo.
-                // Usamos 'u.Activo == true' para asegurar un mapeo correcto del tipo BIT (1) de SQL.
-                usuarioId = await _context.UsuarioReferencia
-                                        .Where(u => u.Activo == true)
-                                        .OrderBy(u => u.UsuarioId)
-                                        .Select(u => (int?)u.UsuarioId)
-                                        .FirstOrDefaultAsync(cancellationToken);
-            }
-
-            if (!usuarioId.HasValue)
-                throw new Exception(
-                    "No hay usuario disponible para la asignación según las reglas de negocio."
-                );
-
-            await using IDbContextTransaction transaction =
-                await _context.Database.BeginTransactionAsync(cancellationToken);
-
+            UsuarioReferencia usuarioAsignado = null;
             try
             {
-                // Buscamos la entidad UsuarioReferencia para la asignación y actualización del contador.
-                var usuario =
-                    await _context.UsuarioReferencia.FindAsync(usuarioId.Value);
-
-                // Eliminamos la búsqueda de EstadisticaUsuario, ya que el contador está en UsuarioReferencia.
-
-
-                if (usuario == null)
-                {
-                    throw new Exception(
-                        $"El usuario seleccionado (" +
-                        $"ID: {usuarioId.Value}) no existe."
-                    );
-                }
-
-                // Eliminamos la verificación de estadísticas redundante.
-
-
-                var item = new ItemTrabajo
-                {
-                    Titulo = request.Titulo,
-                    Descripcion = request.Descripcion,
-                    FechaCreacion = DateTime.UtcNow,
-                    FechaEntrega = request.FechaEntrega,
-                    Relevancia = request.Relevancia,
-                    Estado = "Pendiente",
-                    UsuarioAsignado = usuarioId.Value
-                };
-
-                _context.ItemTrabajo.Add(item);
-
-                // **ACTUALIZACIÓN DE CONTADOR EN LA ENTIDAD CORRECTA (UsuarioReferencia)**
-                usuario.ItemsPendientes += 1;
-
-                var historial = new HistorialAsignacion
-                {
-                    UsuarioId = usuarioId.Value,
-                    FechaAsignacion = DateTime.UtcNow,
-                    EstadoAsignacion = "Activa",
-                    Item = item
-                };
-                _context.HistorialAsignacion.Add(historial);
-
-                await _context.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(cancellationToken);
-                return item.ItemId;
+                usuarioAsignado = await _asignacionService.AsignarUsuario(
+                    request.Relevancia,
+                    item
+                );
             }
-            catch (Exception)
+            catch (System.Exception ex)
             {
-                await transaction.RollbackAsync(cancellationToken);
-                throw;
+                Console.WriteLine(
+                    $"[ADVERTENCIA] AsignacionService falló: " +
+                    $"{ex.Message}. ");
             }
+
+            if (usuarioAsignado == null)
+            {
+                usuarioAsignado = await _context.UsuarioReferencia
+                    .OrderBy(u => u.ItemsPendientes)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+                if (usuarioAsignado == null)
+                {
+                    usuarioAsignado = await _context.UsuarioReferencia
+                        .FirstOrDefaultAsync(cancellationToken);
+                }
+            }
+
+            if (usuarioAsignado == null)
+            {
+                throw new System.Exception(
+                    "No hay usuario disponible para la asignación según las reglas de negocio. " +
+                    "Por favor, verifique que la tabla 'UsuarioReferencia' contenga al menos un usuario.");
+            }
+
+            item.AsignarUsuario(
+                usuarioAsignado.UsuarioId
+            );
+
+            item.AgregarHistorial(
+                HistorialAsignacion.Crear(
+                    item.ItemId, 
+                    usuarioAsignado.UsuarioId, 
+                    "Creado y asignado automáticamente"
+                )
+            );
+
+            usuarioAsignado.ItemsPendientes++;
+            _context.ItemTrabajo.Add(item);
+            _context.UsuarioReferencia.Update(usuarioAsignado);
+            await _context.SaveChangesAsync(cancellationToken);
+            return item.ItemId;
         }
     }
 }
