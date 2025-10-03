@@ -1,6 +1,9 @@
 ﻿using MediatR;
 using Microservicio.Items.API.Domain;
 using Microservicio.Items.API.Infrastructure;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Microservicio.Items.API.App.Commands.CrearItem
 {
@@ -13,19 +16,16 @@ namespace Microservicio.Items.API.App.Commands.CrearItem
         ) => _context = context;
 
         public async Task<int> Handle(
-            CrearItemCommand request, 
+            CrearItemCommand request,
             CancellationToken cancellationToken
-        ) 
+        )
         {
-            var item = new ItemTrabajo
-            {
-                Titulo        = request.Titulo,
-                Descripcion   = request.Descripcion,
-                FechaCreacion = DateTime.UtcNow,
-                FechaEntrega  = request.FechaEntrega,
-                Relevancia    = request.Relevancia,
-                Estado        = "Pendiente"
-            };
+            var item = ItemTrabajo.Crear(
+                request.Titulo,
+                request.Descripcion,
+                request.FechaEntrega,
+                request.Relevancia 
+            );
 
             _context.ItemTrabajo.Add(item);
             await _context.SaveChangesAsync(cancellationToken);

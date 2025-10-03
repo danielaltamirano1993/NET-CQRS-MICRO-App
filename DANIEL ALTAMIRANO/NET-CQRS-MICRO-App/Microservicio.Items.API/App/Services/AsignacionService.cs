@@ -50,7 +50,7 @@ namespace Microservicio.Items.API.App.Services
             {
                 return null;
             }
-
+            // Calcula cuántos ítems de alta relevancia (2) tiene cada usuario pendiente
             var altaRelevanciaPendientes = await _context.ItemTrabajo
                 .Where(i => i.Estado == "Pendiente" && 
                             i.Relevancia == 2
@@ -88,6 +88,7 @@ namespace Microservicio.Items.API.App.Services
                     .FirstOrDefault();
             }
 
+            // Bloque que se ejecuta si el ítem a asignar es de alta relevancia (2)
             else if (relevancia == 2)
             {
                 var noSaturados = usuariosConCarga

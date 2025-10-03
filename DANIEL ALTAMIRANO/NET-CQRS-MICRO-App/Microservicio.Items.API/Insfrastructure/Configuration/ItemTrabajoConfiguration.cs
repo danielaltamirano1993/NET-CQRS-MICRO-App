@@ -2,19 +2,21 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Microservicio.Items.API.Infrastructure.Configuration
+public class ItemTrabajoConfiguration : IEntityTypeConfiguration<ItemTrabajo>
 {
-    public class ItemTrabajoConfiguration : IEntityTypeConfiguration<ItemTrabajo>
+    public void Configure(
+        EntityTypeBuilder<ItemTrabajo> builder
+    )
     {
-        public void Configure(
-            EntityTypeBuilder<ItemTrabajo> builder
-        )
-        {
-            builder.HasOne(i => i.Usuario) 
-                   .WithMany(u => u.ItemsAsignados)
-                   .HasForeignKey(i => i.UsuarioAsignado)
-                   .IsRequired(false)
-                   .OnDelete(DeleteBehavior.Restrict);
-        }
+        builder.HasOne(i => i.Usuario)
+                .WithMany(u => u.ItemsAsignados)
+                .HasForeignKey(i => i.UsuarioAsignado)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.HasMany(i => i.Historiales)
+                .WithOne()
+                .HasForeignKey("ItemTrabajoId")
+                .OnDelete(DeleteBehavior.Restrict);
     }
 }

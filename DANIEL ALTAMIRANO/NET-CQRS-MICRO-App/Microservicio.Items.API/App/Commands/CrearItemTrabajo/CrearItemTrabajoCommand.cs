@@ -3,11 +3,13 @@ using System;
 
 namespace Microservicio.Items.API.App.Commands
 {
-    public class CrearItemTrabajoCommand : IRequest<int>
+    public record CrearItemTrabajoCommand : IRequest<int>
     {
-        public string Titulo { get; set; }
-        public string Descripcion { get; set; }
-        public DateTime FechaEntrega { get; set; }
-        public byte Relevancia { get; set; } = 1; // 1 = Baja, 2 = Alta
+        public string Titulo { get; init; } = string.Empty;
+        public string Descripcion { get; init; } = string.Empty;
+        public DateTime FechaEntrega { get; init; }
+        public byte Relevancia { get; init; } = 1;
+        public int? UsuarioAsignado { get; init; }
+
     }
 }

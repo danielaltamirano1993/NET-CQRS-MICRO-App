@@ -6,7 +6,7 @@ namespace Microservicio.Items.API.Domain
 {
     public partial class HistorialAsignacion
     {
-        protected HistorialAsignacion() { }
+        public HistorialAsignacion() { }
 
         [Key]
         public int HistorialId { get; set; }
@@ -22,5 +22,7 @@ namespace Microservicio.Items.API.Domain
 
         [MaxLength(255)]
         public string Comentarios { get; set; } = string.Empty;
+
+        public UsuarioReferencia Usuario { get; set; }
     }
 }

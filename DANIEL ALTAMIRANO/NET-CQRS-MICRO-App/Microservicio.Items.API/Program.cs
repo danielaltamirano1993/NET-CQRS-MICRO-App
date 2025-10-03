@@ -2,6 +2,7 @@ using MediatR;
 using Microservicio.Items.API.App.Services;
 using Microservicio.Items.API.App.Services.Contracts;
 using Microservicio.Items.API.Infrastructure;
+using Microservicio.Items.API.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +13,8 @@ builder.Services.AddDbContext<ItemDbContext>(options =>
 builder.Services.AddMediatR(typeof(Program).Assembly);
 
 builder.Services.AddScoped<IAsignacionService, AsignacionService>();
+builder.Services.AddScoped<IUsuarioReferenciaRepository, UsuarioReferenciaRepository>();
+builder.Services.AddScoped<IReordenamientoService, ReordenamientoService>();
 
 builder.Services.AddHttpClient<ISincronizacionUsuarioService, SincronizacionUsuarioService>(client =>
 {

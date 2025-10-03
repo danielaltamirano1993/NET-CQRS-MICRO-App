@@ -7,9 +7,8 @@ namespace Microservicio.Items.API.Domain
 {
     public partial class ItemTrabajo
     {
-        protected ItemTrabajo()
+        public ItemTrabajo()
         {
-            Historiales = new List<HistorialAsignacion>();
         }
 
         [Key]
@@ -30,6 +29,8 @@ namespace Microservicio.Items.API.Domain
         [Required]
         public byte Relevancia { get; set; } = 1;
 
+        public int Orden { get; internal set; } = 0; // 0 por defecto
+
         [Required]
         [MaxLength(20)]
         public string Estado { get; set; } = "Pendiente";
@@ -37,7 +38,6 @@ namespace Microservicio.Items.API.Domain
         public int? UsuarioAsignado { get; set; }
         public UsuarioReferencia? Usuario { get; set; }
 
-        [NotMapped]
-        public ICollection<HistorialAsignacion> Historiales { get; set; }
+        public ICollection<HistorialAsignacion> Historiales { get; set; } = new List<HistorialAsignacion>();
     }
 }

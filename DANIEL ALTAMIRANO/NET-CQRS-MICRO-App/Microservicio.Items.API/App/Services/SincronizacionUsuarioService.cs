@@ -1,127 +1,100 @@
-﻿using Microservicio.Items.API.App.Services.Contracts;
-using Microservicio.Items.API.Domain;
-using Microservicio.Items.API.Infrastructure;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System;
-using Microservicio.Items.API.App.Services.Dtos;
+using System.Threading.Tasks;
+using Microservicio.Items.API.App.Dto;
+using Microservicio.Items.API.App.Services.Contracts;
+using Microservicio.Items.API.Domain;
 
-namespace Microservicio.Items.API.App.Services
+public class SincronizacionUsuarioService : ISincronizacionUsuarioService
 {
-    public class SincronizacionUsuarioService : ISincronizacionUsuarioService
+    private readonly HttpClient _httpClient;
+    private const string UsuariosGetAllEndpoint = "/api/Usuario";
+
+    public SincronizacionUsuarioService(HttpClient httpClient)
     {
-        private readonly ItemDbContext _context;
-        private readonly HttpClient _httpClient;
+        _httpClient = httpClient;
+    }
 
-        public SincronizacionUsuarioService(ItemDbContext context, HttpClient httpClient)
+    private async Task<List<UsuarioExternoDto>?> ObtenerUsuariosExternosAsync()
+    {
+        try
         {
-            _context = context;
-            _httpClient = httpClient;
+            var response = await _httpClient.GetAsync(UsuariosGetAllEndpoint);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var errorContent = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException(
+                    $"Error al consumir el servicio externo de usuarios: {(int)response.StatusCode} ({response.ReasonPhrase}). Contenido: {errorContent}"
+                );
+            }
+
+            return await response.Content.ReadFromJsonAsync<List<UsuarioExternoDto>>();
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[ERROR CLIENTE USUARIOS]: {ex.Message}");
+            throw;
+        }
+    }
 
-        public async Task SincronizarUsuariosAsync()
-        {   
-            List<UsuarioExternoDto>? usuariosExternos = null;
+    public async Task<SincronizacionResultDto> SincronizarUsuariosAsync()
+    {
+        var fechaEjecucion = DateTime.UtcNow;
 
-            try
+        try
+        {
+            var usuariosExternos = await ObtenerUsuariosExternosAsync();
+
+            if (usuariosExternos == null)
             {
-                usuariosExternos = await _httpClient.GetFromJsonAsync<List<UsuarioExternoDto>>("/api/Usuario");
-            }
-            catch (HttpRequestException ex)
-            {
-                Console.WriteLine(
-                    $"ERROR DE CONEXIÓN CRÍTICO: " +
-                    $"No se pudo conectar a la API de Usuarios. " +
-                    $"Detalle: " +
-                    $"{ex.Message}"
+                return new SincronizacionResultDto(
+                    false,
+                    0,
+                    0,
+                    0,
+                    fechaEjecucion,
+                    "El servicio de usuarios devolvió una respuesta nula."
                 );
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine(
-                    $"ERROR DE SINCRONIZACIÓN: " +
-                    $"{ex.Message}"
-                );
-            }
 
-            if (usuariosExternos == null || 
-                !usuariosExternos.Any())
-            {
-                if (!await _context.UsuarioReferencia.AnyAsync())
-                {
-                    Console.WriteLine(
-                        "La sincronización falló. " +
-                        "Insertando usuario de Test para el arranque..."
-                    );
-                    var usuarioRescate = new UsuarioReferencia
-                    {
-                        UsuarioId = 9999,
-                        NombreUsuario = "Usuario Test",
-                        Activo = true,
-                        ItemsPendientes = 0,
-                        ItemsCompletados = 0
-                    };
-                    _context.UsuarioReferencia.Add(usuarioRescate);
-                    await _context.SaveChangesAsync();
-                    Console.WriteLine("UsuarioTest (ID 9999) insertado.");
-                    return;
-                }
-                Console.WriteLine("[ADVERTENCIA] " +
-                                  "El microservicio de Usuarios no devolvió datos, pero existen usuarios de referencia previamente."
-                );
-                return;
-            }
-
-            var usuariosExistentes = await _context.UsuarioReferencia
-                                                   .ToDictionaryAsync(u => u.UsuarioId);
-
-            foreach (var usuarioExterno in usuariosExternos)
-            {
-                if (usuariosExistentes.TryGetValue(
-                                                    usuarioExterno.UsuarioId, 
-                                                    out var usuarioLocal
-                                                  )
-                )
-                {
-                    if (usuarioLocal.NombreUsuario != usuarioExterno.NombreUsuario ||
-                        usuarioLocal.Activo != usuarioExterno.Activo)
-                    {
-                        usuarioLocal.NombreUsuario = usuarioExterno.NombreUsuario;
-                        usuarioLocal.Activo = usuarioExterno.Activo;
-                        _context.UsuarioReferencia.Update(usuarioLocal);
-                    }
-                }
-                else
-                {
-                    var nuevoUsuario = new UsuarioReferencia
-                    {
-                        UsuarioId = usuarioExterno.UsuarioId,
-                        NombreUsuario = usuarioExterno.NombreUsuario,
-                        Activo = usuarioExterno.Activo,
-                        ItemsPendientes = 0,
-                        ItemsCompletados = 0
-                    };
-                    _context.UsuarioReferencia.Add(nuevoUsuario);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            Console.WriteLine(
-                $"[INFO] Sincronización finalizada. " +
-                $"{usuariosExternos.Count} usuarios procesados."
+            return new SincronizacionResultDto(
+                true,
+                usuariosExternos.Count,
+                usuariosExternos.Count(u => u.Activo),
+                0,
+                fechaEjecucion,
+                $"Sincronización exitosa. {usuariosExternos.Count} usuarios procesados."
             );
         }
-
-        public async Task<UsuarioReferencia?> ObtenerUsuarioConMenorCargaAsync()
+        catch (Exception ex)
         {
-            return await _context.UsuarioReferencia
-                       .Where(u => u.Activo == true)
-                       .OrderBy(u => u.ItemsPendientes)
-                       .FirstOrDefaultAsync();
+            return new SincronizacionResultDto(
+                false,
+                0,
+                0,
+                0,
+                fechaEjecucion,
+                ex.Message
+            );
         }
+    }
+
+    public Task<UsuarioReferencia?> ObtenerUsuarioConMenorCargaAsync()
+    {
+        var mockUsuario = UsuarioReferencia.Crear(
+            usuarioId: 101,
+            nombreUsuario: "UsuarioCargaBaja",
+            correo: "carga.baja@mock.com",
+            limiteItems: 50
+        );
+
+        mockUsuario.ItemsPendientes = 10;
+        mockUsuario.ItemsCompletados = 5;
+
+        return Task.FromResult<UsuarioReferencia?>(mockUsuario);
     }
 }

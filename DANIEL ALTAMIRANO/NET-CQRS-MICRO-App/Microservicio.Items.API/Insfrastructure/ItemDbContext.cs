@@ -17,7 +17,10 @@ namespace Microservicio.Items.API.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ItemDbContext).Assembly);
-            modelBuilder.Entity<ItemTrabajoSqlResult>().HasNoKey();
+            modelBuilder.Entity<ItemTrabajoSqlResult>()
+                         .HasNoKey()
+                         .ToView(null);
+
             base.OnModelCreating(modelBuilder);
         }
     }

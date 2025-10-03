@@ -1,11 +1,13 @@
 ﻿using MediatR;
-using Microservicio.Items.API.App.Commands.CambiarEstadoItem;
-using Microservicio.Items.API.App.Commands.CompletarItemTrabajo;
-using Microservicio.Items.API.App.Dto;
-using Microservicio.Items.API.App.Queries.GetPendientesPorUsuario;
 using Microservicio.Items.API.App.Commands;
-
+using Microservicio.Items.API.App.Commands.CambiarEstadoItem;
+using Microservicio.Items.API.App.Commands.CrearItemTrabajo;
+using Microservicio.Items.API.App.Dto;
+using Microservicio.Items.API.App.Queries.ConsultarTodosLosItems;
+using Microservicio.Items.API.App.Queries.GetPendientesPorUsuario;
+using Microservicio.Items.API.App.Services.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Microservicio.Items.API.Controllers
 {
@@ -14,95 +16,96 @@ namespace Microservicio.Items.API.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public ItemsController(
-            IMediator mediator
-        ) => _mediator = mediator;
+        private readonly ISincronizacionUsuarioService _sincronizacionUsuarioService;
 
+        public ItemsController(IMediator mediator, ISincronizacionUsuarioService sincronizacionUsuarioService)
+        {
+            _mediator = mediator;
+            _sincronizacionUsuarioService = sincronizacionUsuarioService;
+        }
+
+        /// <summary>
+        /// Crea un nuevo ítem de trabajo y lo asigna al usuario con menor carga.
+        /// </summary>
         [HttpPost("CrearItemTrabajo")]
-        public async Task<IActionResult> CrearItemTrabajo(
-            [FromBody] CrearItemTrabajoCommand command
-        )
+        public async Task<ActionResult<int>> CrearItemTrabajo(CrearItemTrabajoCommand command)
         {
-            var id = await _mediator.Send(command);
-            return Ok(
-                new
-                {
-                    ItemId = id
-                }
-            );
+            var itemId = await _mediator.Send(command);
+            return Ok(itemId);
         }
 
-        [HttpPut("{itemId}/CompletarItem/{usuarioReferenciaId}")]
-        public async Task<IActionResult> CompletarItem(
-            int itemId,
-            int usuarioReferenciaId
-        )
-        {
-            var result = await _mediator.Send(
-                new CompletarItemTrabajoCommand(
-                    itemId,
-                    usuarioReferenciaId
-                )
-            );
-
-            if (!result)
-                return NotFound(
-                    new
-                    {
-                        Message = "Ítem no encontrado"
-                    }
-                );
-            return Ok(
-                new
-                {
-                    Message = "Ítem marcado como completado"
-                }
-            );
-        }
-
-        //Pendiente
-        //Completado
+        /// <summary>
+        /// Cambia el estado de un ítem de trabajo existente.
+        /// </summary>
         [HttpPut("{itemId}/CambiarEstado")]
-        public async Task<IActionResult> CambiarEstado(
-            int itemId,
-            [FromBody] CambiarEstadoItemBody body
+        public async Task<ActionResult> CambiarEstadoItem( 
+             int itemId,
+             [FromBody] CambiarEstadoItemCommand command
         )
         {
-            var command = new CambiarEstadoItemCommand(
-                itemId,
-                body.NuevoEstado
-            );
+            command = command with { ItemId = itemId };
+            var result = await _mediator.Send(command); 
 
-            var result = await _mediator.Send(
-                command
-            );
-
-            if (!result)
-                return NotFound(
-                    $"No se encontró el item {itemId}"
-                );
-
-            return Ok(
-                new
-                {
-                    Message = $"El estado del item {itemId} " +
-                                $"fue cambiado a " +
-                                $"{command.NuevoEstado}"
-                }
-            );
+            if (!result) 
+            {
+                return NotFound($"Ítem con ID {itemId} no encontrado o estado no válido.");
+            }
+            return Ok(new
+            {
+                mensaje = "Estado del ítem cambiado exitosamente.",
+                itemId = itemId,
+                nuevoEstado = command.NuevoEstado 
+            });
         }
 
+        /// <summary>
+        /// Consulta todos los ítems de trabajo pendientes para un usuario específico, ordenados por Relevancia y FechaEntrega.
+        /// </summary>
         [HttpGet("PendientesPorUsuario/{usuarioId}")]
-        public async Task<IActionResult> ObtenerPendientesPorUsuario(
-            int usuarioId
-        )
+        public async Task<ActionResult<IEnumerable<ItemTrabajoSqlResult>>> GetPendientesPorUsuario(int usuarioId)
         {
-            var items = await _mediator.Send(
-                new GetPendientesPorUsuarioQuery(
-                    usuarioId
-                )
-            );
-            return Ok(items);
+            // Corregido: Si el constructor requiere el UsuarioId como parámetro.
+            var query = new GetPendientesPorUsuarioQuery(usuarioId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
+
+        /// <summary>
+        /// Consulta todos los ítems de trabajo en el sistema (Administrador).
+        /// </summary>
+        [HttpGet("ConsultarTodosLosItems")]
+        public async Task<ActionResult<IEnumerable<ItemTrabajoDto>>> ConsultarTodosLosItems()
+        {
+            var query = new ConsultarTodosLosItemsQuery();
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
+        /// <summary>
+        /// Dispara la sincronización manual de usuarios desde el microservicio externo. (Endpoint de Administración/Mantenimiento)
+        /// </summary>
+        [HttpPost("SincronizarUsuarios")]
+        public async Task<ActionResult> SincronizarUsuarios()
+        {
+            var result = await _sincronizacionUsuarioService.SincronizarUsuariosAsync();
+
+            if (result.Exito)
+            {
+                return Ok(new
+                {
+                    mensaje = result.MensajeDetalle ?? "Sincronización completada con éxito.",
+                    resumen = result
+                });
+            }
+            else
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = result.MensajeDetalle ?? "La sincronización falló. Verifique los logs.",
+                    resumen = result
+                });
+            }
+        }
+
     }
 }

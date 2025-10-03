@@ -46,6 +46,7 @@ SELECT ItemId,
 	   Estado
 FROM   ItemTrabajo
 WHERE  Relevancia >=2
+ORDER BY UsuarioAsignado
 GO
 
 --Relevancia =1
@@ -59,6 +60,7 @@ SELECT ItemId,
 	   Estado
 FROM   ItemTrabajo
 WHERE  Relevancia =1
+ORDER BY UsuarioAsignado
 GO
 
 --Esta tabla se llena de acuerdo a las asignaciones en el micro
