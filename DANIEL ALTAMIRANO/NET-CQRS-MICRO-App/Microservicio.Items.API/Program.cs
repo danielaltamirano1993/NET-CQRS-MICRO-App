@@ -15,6 +15,16 @@ builder.Services.AddMediatR(typeof(Program).Assembly);
 builder.Services.AddScoped<IAsignacionService, AsignacionService>();
 builder.Services.AddScoped<IUsuarioReferenciaRepository, UsuarioReferenciaRepository>();
 builder.Services.AddScoped<IReordenamientoService, ReordenamientoService>();
+builder.Services.AddScoped<ISincronizacionUsuarioService, SincronizacionUsuarioService>();
+
+builder.Services.AddHttpClient("UsuariosApi", client =>
+{
+    var baseUrl = builder.Configuration["MicroserviciosConfig:UrlUsuarios"];
+    if (baseUrl != null)
+    {
+        client.BaseAddress = new Uri(baseUrl);
+    }
+});
 
 builder.Services.AddHttpClient<ISincronizacionUsuarioService, SincronizacionUsuarioService>(client =>
 {
@@ -33,6 +43,8 @@ using (var scope = app.Services.CreateScope())
     var syncService = scope.ServiceProvider.GetRequiredService<ISincronizacionUsuarioService>();
     syncService.SincronizarUsuariosAsync().Wait();
 }
+
+await DataSeeder.EnsureUsersSynchronizedAsync(app.Services, app.Configuration);
 
 if (app.Environment.IsDevelopment())
 {
