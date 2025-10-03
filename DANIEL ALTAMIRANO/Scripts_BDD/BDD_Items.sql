@@ -13,68 +13,119 @@ DROP TABLE IF EXISTS HistorialAsignacion;
 DROP TABLE IF EXISTS ItemTrabajo;
 DROP TABLE IF EXISTS UsuarioReferencia;
 
--- Tabla de usuarios de referencia (copia mínima para asignaciones)
-CREATE TABLE UsuarioReferencia (
-    UsuarioId					INT
-								PRIMARY KEY,
-    NombreUsuario				NVARCHAR(100) NOT NULL,
-	ItemsPendientes				INT NOT NULL 
-								DEFAULT(0),
-    ItemsCompletados			INT NOT NULL 
-								DEFAULT(0),
-	Activo					    BIT NOT NULL 
-								DEFAULT(1) --SI
-);
+USE [BDD_Items]
 GO
 
--- Tabla principal de ítems
-CREATE TABLE ItemTrabajo (
-    ItemId			INT IDENTITY(1,1) 
-					PRIMARY KEY,
-    Titulo			NVARCHAR(200) NOT NULL,
-    Descripcion		NVARCHAR(MAX) NULL,
-    FechaCreacion	DATETIME NOT NULL 
-				    DEFAULT(GETDATE()),
-    FechaEntrega	DATETIME NOT NULL,
-    Relevancia		TINYINT NOT NULL 
-					CHECK (
-							Relevancia IN (
-											1, -- 1 = Baja, 
-											2  -- 2 = Alta
-										   )
-						  ), 
-    Estado			VARCHAR(20) NOT NULL 
-					CHECK (
-							Estado IN (
-										'Pendiente',
-										'Completado'
-									  )
-						  ),
-    UsuarioAsignado INT NULL,
-    CONSTRAINT FK_ItemTrabajo_UsuarioReferencia 
-	FOREIGN KEY (UsuarioAsignado) 
-	REFERENCES UsuarioReferencia (UsuarioId)
-);
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[HistorialAsignacion](
+	[HistorialId]	  [int] IDENTITY(1,1) NOT NULL,
+	[ItemTrabajoId]   [int]				  NOT NULL,
+	[UsuarioId]		  [int]				  NOT NULL,
+	[FechaAsignacion] [datetime2](7)	  NOT NULL,
+	[Comentarios]     [nvarchar](255)     NOT NULL,
+ CONSTRAINT [PK_HistorialAsignacion] 
+ PRIMARY KEY CLUSTERED 
+(
+[HistorialId] ASC
+)
+WITH (
+PAD_INDEX = OFF, 
+STATISTICS_NORECOMPUTE = OFF, 
+IGNORE_DUP_KEY = OFF, 
+ALLOW_ROW_LOCKS = ON, 
+ALLOW_PAGE_LOCKS = ON, 
+OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF
+) ON [PRIMARY]
+) ON [PRIMARY]
 GO
 
---Tabla Historial de asignaciones
-CREATE TABLE HistorialAsignacion (
-    HistorialId			INT IDENTITY(1,1)
-						PRIMARY KEY,
-    ItemId				INT NOT NULL,
-    UsuarioId			INT NOT NULL,
-    FechaAsignacion		DATETIME NOT NULL 
-						DEFAULT(GETDATE()),
-    EstadoAsignacion	VARCHAR(20) NOT NULL 
-						CHECK (
-							   EstadoAsignacion IN (
-													'Activa',
-													'Reasignada',
-													'Cancelada'
-												   )
-							  ),
-    CONSTRAINT FK_Historial_Item 
-	FOREIGN KEY (ItemId) 
-	REFERENCES ItemTrabajo(ItemId)
-);
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[ItemTrabajo](
+	[ItemId]		  [int] IDENTITY(1,1) NOT NULL,
+	[Titulo]		  [nvarchar](200)	  NOT NULL,
+	[Descripcion]     [nvarchar](max)	  NULL,
+	[FechaCreacion]   [datetime2](7)	  NOT NULL,
+	[FechaEntrega]    [datetime2](7)	  NOT NULL,
+	[Relevancia]	  [tinyint]			  NOT NULL,
+	[Orden]			  [int]				  NOT NULL,
+	[Estado]		  [nvarchar](20)      NOT NULL,
+	[UsuarioAsignado] [int]				  NULL,
+ CONSTRAINT [PK_ItemTrabajo] 
+ PRIMARY KEY CLUSTERED 
+(
+[ItemId] ASC
+)
+WITH (
+PAD_INDEX = OFF, 
+STATISTICS_NORECOMPUTE = OFF, 
+IGNORE_DUP_KEY = OFF, 
+ALLOW_ROW_LOCKS = ON, 
+ALLOW_PAGE_LOCKS = ON, 
+OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF
+) ON [PRIMARY]
+) ON [PRIMARY] 
+TEXTIMAGE_ON [PRIMARY]
+GO
+
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[UsuarioReferencia](
+	[UsuarioId]			  [int]			  NOT NULL,
+	[NombreUsuario]		  [nvarchar](100) NOT NULL,
+	[Correo]			  [nvarchar](max) NOT NULL,
+	[LimiteItems]		  [int]			  NOT NULL,
+	[Activo]			  [bit]			  NOT NULL,
+	[FechaRegistro]		  [datetime2](7)  NOT NULL,
+	[UltimaActualizacion] [datetime2](7)  NOT NULL,
+	[ItemsPendientes]	  [int]			  NOT NULL,
+	[ItemsCompletados]	  [int]			  NOT NULL,
+ CONSTRAINT [PK_UsuarioReferencia] 
+ PRIMARY KEY CLUSTERED 
+(
+[UsuarioId] ASC
+)
+WITH (
+PAD_INDEX = OFF, 
+STATISTICS_NORECOMPUTE = OFF, 
+IGNORE_DUP_KEY = OFF, 
+ALLOW_ROW_LOCKS = ON, 
+ALLOW_PAGE_LOCKS = ON, 
+OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF
+) ON [PRIMARY]
+) ON [PRIMARY] 
+TEXTIMAGE_ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[HistorialAsignacion]  
+WITH CHECK 
+ADD  CONSTRAINT [FK_HistorialAsignacion_ItemTrabajo_ItemTrabajoId] 
+FOREIGN KEY([ItemTrabajoId])
+REFERENCES [dbo].[ItemTrabajo] ([ItemId])
+GO
+ALTER TABLE [dbo].[HistorialAsignacion] 
+CHECK CONSTRAINT [FK_HistorialAsignacion_ItemTrabajo_ItemTrabajoId]
+GO
+ALTER TABLE [dbo].[HistorialAsignacion]  
+WITH CHECK 
+ADD  CONSTRAINT [FK_HistorialAsignacion_UsuarioReferencia_UsuarioId] 
+FOREIGN KEY([UsuarioId])
+REFERENCES [dbo].[UsuarioReferencia] ([UsuarioId])
+GO
+ALTER TABLE [dbo].[HistorialAsignacion] 
+CHECK CONSTRAINT [FK_HistorialAsignacion_UsuarioReferencia_UsuarioId]
+GO
+ALTER TABLE [dbo].[ItemTrabajo]  
+WITH CHECK ADD  CONSTRAINT [FK_ItemTrabajo_UsuarioReferencia_UsuarioAsignado] 
+FOREIGN KEY([UsuarioAsignado])
+REFERENCES [dbo].[UsuarioReferencia] ([UsuarioId])
+GO
+ALTER TABLE [dbo].[ItemTrabajo] 
+CHECK CONSTRAINT [FK_ItemTrabajo_UsuarioReferencia_UsuarioAsignado]
 GO
