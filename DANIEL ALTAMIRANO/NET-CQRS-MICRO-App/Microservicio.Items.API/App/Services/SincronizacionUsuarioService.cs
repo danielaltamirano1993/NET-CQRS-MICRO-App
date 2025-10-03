@@ -28,7 +28,10 @@ public class SincronizacionUsuarioService : ISincronizacionUsuarioService
             {
                 var errorContent = await response.Content.ReadAsStringAsync();
                 throw new HttpRequestException(
-                    $"Error al consumir el servicio externo de usuarios: {(int)response.StatusCode} ({response.ReasonPhrase}). Contenido: {errorContent}"
+                    $"Error al consumir el servicio externo de usuarios: " +
+                    $"{(int)response.StatusCode} " +
+                    $"({response.ReasonPhrase}). " +
+                    $"Contenido: {errorContent}"
                 );
             }
 
@@ -67,7 +70,8 @@ public class SincronizacionUsuarioService : ISincronizacionUsuarioService
                 usuariosExternos.Count(u => u.Activo),
                 0,
                 fechaEjecucion,
-                $"Sincronización exitosa. {usuariosExternos.Count} usuarios procesados."
+                $"Sincronización exitosa. {usuariosExternos.Count} " +
+                $"usuarios procesados."
             );
         }
         catch (Exception ex)
@@ -88,7 +92,7 @@ public class SincronizacionUsuarioService : ISincronizacionUsuarioService
         var mockUsuario = UsuarioReferencia.Crear(
             usuarioId: 101,
             nombreUsuario: "UsuarioCargaBaja",
-            correo: "carga.baja@mock.com",
+            correo: "cargabaja@email.com",
             limiteItems: 50
         );
 

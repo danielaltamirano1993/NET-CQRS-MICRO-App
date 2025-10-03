@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Microservicio.Items.API.Migrations
 {
     [DbContext(typeof(ItemDbContext))]
-    [Migration("20251003024720_InitialSchemaCleanV2")]
+    [Migration("20251003062418_InitialSchemaCleanV2")]
     partial class InitialSchemaCleanV2
     {
         /// <inheritdoc />

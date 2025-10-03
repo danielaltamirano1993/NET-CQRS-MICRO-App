@@ -1,0 +1,49 @@
+-------------------------------------------
+MICRO USUARIOS
+-------------------------------------------
+[]
+POST
+http://localhost:5191/api/Usuario
+body
+{
+  "nombreUsuario": "Usuario_Caso1",
+  "correo": "usuario1@email.com",
+  "activo": 1
+}
+[]
+GET
+http://localhost:5191/api/Usuario
+
+
+
+
+-------------------------------------------
+MICRO ITEMS
+-------------------------------------------
+[]
+POST 
+http://localhost:5000/api/Items/CrearItemTrabajo
+body
+{
+    "titulo": "Item #1",
+    "descripcion": "Descripcion Item #1",
+    "fechaEntrega": "2025-10-03T12:00:00Z",
+    "relevancia": 2
+}
+[]
+PUT
+http://localhost:5000/api/Items/1/CambiarEstado
+body
+{
+  "nuevoEstado": "Completado"
+}
+[]
+GET
+http://localhost:5000/api/Items/PendientesPorUsuario/3
+[]
+GET
+http://localhost:5000/api/Items/ConsultarTodosLosItems
+[]
+POST
+http://localhost:5000/api/Items/SincronizarUsuarios
+[]

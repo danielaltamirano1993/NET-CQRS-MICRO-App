@@ -77,7 +77,7 @@ namespace Microservicio.Items.API.Infrastructure
                             userDto.UsuarioId,
                             userDto.NombreUsuario,
                             userDto.Correo,
-                            10
+                            3
                         );
 
                         if (!userDto.Activo)
